@@ -3,6 +3,8 @@
 
 # mtd
 
+> ⚠️ **mtd is under active development; breaking changes may occur.**
+
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/xzheng42/mtd/workflows/R-CMD-check/badge.svg)](https://github.com/xzheng42/mtd/actions)
@@ -27,26 +29,25 @@ simulation, model fitting, model checking and model prediction.
 
 ### Model simulation
 
--   `rMTD` simulates a time series from an MTD model with a
-    pre-specified stationary marginal distribution.
+- `rMTD` simulates a time series from an MTD model with a pre-specified
+  stationary marginal distribution.
 
 ### Model fitting
 
--   `tsMTD` fits an MTD model with a pre-specified stationary marginal
-    distribution.
+- `tsMTD` fits an MTD model with a pre-specified stationary marginal
+  distribution.
 
--   `tsRegMTD` fits a regression MTD model with a pre-specified
-    stationary marginal distribution.
+- `tsRegMTD` fits a regression MTD model with a pre-specified stationary
+  marginal distribution.
 
 ### Model checking
 
--   `rqrMTD` performs model checking for an MTD model using randomized
-    quantile residuals.
+- `rqrMTD` performs model checking for an MTD model using randomized
+  quantile residuals.
 
 ### Model prediction
 
--   `predMTD` generates one-step ahead posterior predictive
-    distributions.
+- `predMTD` generates one-step ahead posterior predictive distributions.
 
 ## Example
 
@@ -71,7 +72,7 @@ obs <- simu$y
 plot(obs, type = "l", xlab = "Time", ylab = "Count", las = 1, ylim = c(0, 50))
 ```
 
-<img src="man/figures/README-simulation-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-simulation-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Fit an MTD model with a stationary negative binomial marginal
 distribution
@@ -109,7 +110,7 @@ legend("topleft", inset = c(0, -0.15), legend = c("observation", "95% predictive
        cex = 0.8, lwd = 2, horiz = TRUE)
 ```
 
-<img src="man/figures/README-pred-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-pred-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ### More examples
 

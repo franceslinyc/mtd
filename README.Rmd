@@ -17,6 +17,8 @@ knitr::opts_chunk$set(fig.width = 10, fig.height = 4, fig.align = 'center')
 
 # mtd
 
+> ⚠️ **mtd is under active development; breaking changes may occur.**
+
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/xzheng42/mtd/workflows/R-CMD-check/badge.svg)](https://github.com/xzheng42/mtd/actions)
 <!-- badges: end -->
