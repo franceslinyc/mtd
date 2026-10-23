@@ -89,6 +89,375 @@ gibbsGMTD <- function(obs, mtdorder, weight_param, prior, tuning, starting, upda
 }
 
 ##############################################################################
+### Gibbs sampler for Copula Gaussian MTD
+##############################################################################
+gibbsCopGMTD <- function(obs, mtdorder, weight_param, prior, tuning, starting, updateWeight, niter, nburn, nthin, nreport, 
+                         cop_family, marg_family, verbose){ 
+  
+  step_size <- tuning$step_size
+  rho <- starting$rho         
+
+  mu_0 <- prior$mu_0
+  sigma2_0 <- prior$sigma2_0
+  u_0 <- prior$u_0
+  v_0 <- prior$v_0
+
+  upper_mu <- tuning$upper_mu
+  lower_mu <- tuning$lower_mu
+  upper_sigma2 <- tuning$upper_sigma2
+  lower_sigma2 <- tuning$lower_sigma2
+
+  mu <- starting$mu
+  sigma2 <- starting$sigma2
+
+  if (verbose) {
+    
+    if (is.null(nreport)) nreport <- 1000
+    
+    cat("--------------------------------------------\n")
+    cat("\t  Running MCMC\n");
+    cat("--------------------------------------------\n")
+    
+  }
+
+  lag_mat <- as.matrix(lagmat(obs, mtdorder))
+  dat <- obs[-(1:mtdorder)]
+  trun_size <- length(obs) - mtdorder
+  weight <- extraDistr::rdirichlet(1, rep(1 / mtdorder, mtdorder))
+
+  data_label <- sample(1:mtdorder, trun_size, replace = TRUE,  weight)
+  
+  unique_label <- as.numeric(names(table(data_label)))
+  n_j <- rep(0, mtdorder)
+  n_j[unique_label] <- as.numeric(table(data_label))
+
+  dep_lag <- as.numeric(array(NA, dim = trun_size))
+  for (t in 1:trun_size){
+    dep_lag[t] <- lag_mat[t, data_label[t]]
+  }
+  dat_rho <- rho[data_label]
+
+  weight_save <- array(NA, dim = c(mtdorder, niter - nburn))
+  rho_save <- array(NA, dim = c(mtdorder, niter - nburn))
+  mu_save <- array(NA, dim = niter - nburn)
+  sigma2_save <- array(NA, dim = niter - nburn)
+  data_label_save <- array(NA, dim = c(trun_size, niter - nburn))
+  dep_lag_save <- array(NA, dim = c(trun_size, niter - nburn))
+
+  block_runtime <- 0
+
+  for (iter in 1:niter){
+    
+    start_time <- Sys.time()
+
+    mu <- updateCopGMTDmu(mu, dat, dep_lag, mu_0, sigma2_0, dat_rho, sigma2, trun_size, step_size, 
+                          cop_family, marg_family, lower_mu, upper_mu)
+    
+    sigma2 <- updateCopGMTDsigma2(sigma2, dat, dep_lag, u_0, v_0, dat_rho, mu, trun_size, step_size,
+                                  cop_family, marg_family, lower_sigma2, upper_sigma2)
+
+    rho <- updateCopGMTDrho(rho, dat, dep_lag, data_label, mtdorder, step_size, mu, sigma2, 
+                            cop_family, marg_family)
+    
+    yy_param1 <- rep(mu, trun_size)
+    yy_param2 <- rep(sqrt(sigma2), trun_size)                           
+    yy_ne_param1 <- matrix(rep(yy_param1, mtdorder), ncol = mtdorder)
+    yy_ne_param2 <- matrix(rep(yy_param2, mtdorder), ncol = mtdorder)    
+    labels <- updateCopGMTDlabel(dat, lag_mat, mtdorder, weight, rho, 
+                                 cop_family, marg_family,
+                                 yy_param1, yy_param2, yy_ne_param1, yy_ne_param2)
+    data_label <- as.numeric(labels$data_label)
+    dep_lag <- as.numeric(labels$dep_lag)
+    unique_label <- as.numeric(names(table(data_label)))
+    n_j <- rep(0, mtdorder)
+    n_j[unique_label] <- as.numeric(table(data_label))
+    dat_rho <- rho[data_label]
+    
+    weight <- updateWeight(n_j, weight_param)
+    
+    end_time <- Sys.time()
+    block_runtime <- block_runtime + as.numeric(end_time - start_time)
+    
+    if (verbose) {
+      if (iter %% nreport == 0) {
+        cat(paste0("Iterations: ", iter, "/", niter, 
+                   "  Percentage: ", specRound(iter / niter * 100, 2), "%\n"))
+        ert <- (block_runtime / nreport) * (niter - iter)
+        cat(paste0("Estimated remaining time: ", 
+                   specRound(ert / 60, 2), " minutes \n"))
+        block_runtime <- 0
+        cat("--------------------------------------------\n")
+      }
+    }  
+
+    if (iter > nburn){
+      weight_save[, iter - nburn] <- weight
+      rho_save[, iter - nburn] <- rho
+      mu_save[iter - nburn] <- mu
+      sigma2_save[iter - nburn] <- sigma2
+      data_label_save[, iter - nburn] <- data_label
+      dep_lag_save[, iter - nburn] <- dep_lag
+    }
+  }
+  
+  selc_index <- seq(1, niter - nburn, by = nthin)
+  list(weight = weight_save[, selc_index], 
+       rho = rho_save[, selc_index],
+       shape1 = mu_save[selc_index],
+       shape2 = sigma2_save[selc_index], 
+       data_label = data_label_save[, selc_index],
+       dep_lag = dep_lag_save[, selc_index]
+       )
+  
+}
+
+##############################################################################
+### Gibbs sampler for Copula Gamma MTD
+##############################################################################
+gibbsCopGammaMTD <- function(obs, mtdorder, weight_param, prior, tuning, starting, updateWeight, niter, nburn, nthin, nreport, 
+                             cop_family, marg_family, verbose){
+
+  step_size <- tuning$step_size
+  rho <- starting$rho         
+
+  u_alp <- prior$u_alp
+  v_alp <- prior$v_alp
+  u_be <- prior$u_be
+  v_be <- prior$v_be
+
+  upper_alp <- tuning$upper_alp
+  upper_be <- tuning$upper_be
+
+  alp <- starting$alp
+  be <- starting$be
+
+  if (verbose) {
+    
+    if (is.null(nreport)) nreport <- 1000
+    
+    cat("--------------------------------------------\n")
+    cat("\t  Running MCMC\n");
+    cat("--------------------------------------------\n")
+    
+  }
+
+  lag_mat <- as.matrix(lagmat(obs, mtdorder))
+  dat <- obs[-(1:mtdorder)]
+  trun_size <- length(obs) - mtdorder
+  weight <- extraDistr::rdirichlet(1, rep(1 / mtdorder, mtdorder))
+
+  data_label <- sample(1:mtdorder, trun_size, replace = TRUE, weight)
+  
+  unique_label <- as.numeric(names(table(data_label)))
+  n_j <- rep(0, mtdorder)
+  n_j[unique_label] <- as.numeric(table(data_label))
+
+  dep_lag <- as.numeric(array(NA, dim = trun_size))
+  for (t in 1:trun_size){
+    dep_lag[t] <- lag_mat[t, data_label[t]]
+  }
+  dat_rho <- rho[data_label]
+
+  weight_save <- array(NA, dim = c(mtdorder, niter - nburn))
+  rho_save <- array(NA, dim = c(mtdorder, niter - nburn))
+  alp_save <- array(NA, dim = niter - nburn)
+  be_save <- array(NA, dim = niter - nburn)
+
+  block_runtime <- 0
+
+  for (iter in 1:niter){
+    
+    start_time <- Sys.time()
+    
+    alp <- updateCopGammaMTDalp(alp, dat, dep_lag, u_alp, v_alp, dat_rho, be, trun_size, step_size, 
+                                cop_family, marg_family, upper_alp)
+
+    be <- updateCopGammaMTDbe(be, dat, dep_lag, u_be, v_be, dat_rho, alp, trun_size, step_size, 
+                              cop_family, marg_family, upper_be)
+ 
+    rho <- updateCopGammaMTDrho(rho, dat, dep_lag, data_label, mtdorder, step_size, alp, be,
+                                cop_family, marg_family)
+    
+    yy_param1 <- rep(alp, trun_size)
+    yy_param2 <- rep(be, trun_size)                           
+    yy_ne_param1 <- matrix(rep(yy_param1, mtdorder), ncol = mtdorder) 
+    yy_ne_param2 <- matrix(rep(yy_param2, mtdorder), ncol = mtdorder)    
+    labels <- updateCopGMTDlabel(dat, lag_mat, mtdorder, weight, rho,
+                                 cop_family, marg_family,
+                                 yy_param1, yy_param2, yy_ne_param1, yy_ne_param2)
+    data_label <- as.numeric(labels$data_label)
+    dep_lag <- as.numeric(labels$dep_lag)
+    unique_label <- as.numeric(names(table(data_label)))
+    n_j <- rep(0, mtdorder)
+    n_j[unique_label] <- as.numeric(table(data_label))
+    dat_rho <- rho[data_label]
+    
+    weight <- updateWeight(n_j, weight_param)
+    
+    end_time <- Sys.time()
+    block_runtime <- block_runtime + as.numeric(end_time - start_time)
+    
+    if (verbose) {
+      if (iter %% nreport == 0) {
+        cat(paste0("Iterations: ", iter, "/", niter, 
+                   "  Percentage: ", specRound(iter / niter * 100, 2), "%\n"))
+        ert <- (block_runtime / nreport) * (niter - iter)
+        cat(paste0("Estimated remaining time: ", 
+                   specRound(ert / 60, 2), " minutes \n"))
+        block_runtime <- 0
+        cat("--------------------------------------------\n")
+      }
+    }  
+
+    if (iter > nburn){
+      weight_save[, iter - nburn] <- weight
+      rho_save[, iter - nburn] <- rho
+      alp_save[iter - nburn] <- alp
+      be_save[iter - nburn] <- be
+    }
+  }
+
+  selc_index <- seq(1, niter - nburn, by = nthin)
+  list(weight = weight_save[, selc_index], 
+       rho = rho_save[, selc_index],
+       shape1 = alp_save[selc_index],
+       shape2 = be_save[selc_index]
+       )
+  
+}  
+
+##############################################################################
+### Gibbs sampler for Copula ZI Gamma MTD
+##############################################################################
+gibbsCopZIGammaMTD <- function(obs, mtdorder, weight_param, prior, tuning, starting, updateWeight, niter, nburn, nthin, nreport, 
+                               cop_family, marg_family, verbose){
+
+  step_size <- tuning$step_size
+  rho <- starting$rho         
+
+  u_alp <- prior$u_alp
+  v_alp <- prior$v_alp
+  u_be <- prior$u_be
+  v_be <- prior$v_be
+
+  upper_alp <- tuning$upper_alp
+  upper_be <- tuning$upper_be
+
+  alp <- starting$alp
+  be <- starting$be 
+  eps <- starting$eps
+  Pi <- starting$Pi
+
+  if (verbose) {
+    
+    if (is.null(nreport)) nreport <- 1000
+    
+    cat("--------------------------------------------\n")
+    cat("\t  Running MCMC\n");
+    cat("--------------------------------------------\n")
+    
+  }
+
+  lag_mat <- as.matrix(lagmat(obs, mtdorder))
+  dat <- obs[-(1:mtdorder)]
+  trun_size <- length(obs) - mtdorder
+  weight <- extraDistr::rdirichlet(1, rep(1 / mtdorder, mtdorder))
+
+  data_label <- sample(1:mtdorder, trun_size, replace = TRUE, weight)
+  
+  unique_label <- as.numeric(names(table(data_label)))
+  n_j <- rep(0, mtdorder)
+  n_j[unique_label] <- as.numeric(table(data_label))
+
+  dep_lag <- as.numeric(array(NA, dim = trun_size))
+  for (t in 1:trun_size){
+    dep_lag[t] <- lag_mat[t, data_label[t]]
+  }
+  dat_rho <- rho[data_label]
+
+  weight_save <- array(NA, dim = c(mtdorder, niter - nburn))
+  rho_save <- array(NA, dim = c(mtdorder, niter - nburn))
+  alp_save <- array(NA, dim = niter - nburn)
+  be_save <- array(NA, dim = niter - nburn)
+  Pi_save <- array(NA, dim = niter - nburn)
+  eps_save <- array(NA, dim = niter - nburn)
+
+  block_runtime <- 0
+
+  for (iter in 1:niter){
+    
+    start_time <- Sys.time()
+    
+    alp <- updateZICopGammaMTDalp(alp, dat, dep_lag, u_alp, v_alp, dat_rho, be, eps, Pi, trun_size, step_size, 
+                                  cop_family, marg_family, upper_alp)
+
+    be <- updateZICopGammaMTDbe(be, dat, dep_lag, u_be, v_be, dat_rho, alp, eps, Pi, trun_size, step_size, 
+                                cop_family, marg_family, upper_be)
+
+    Pi <- updateZICopGammaMTDPi(Pi, dat, dep_lag, dat_rho, alp, be, eps, trun_size, step_size, 
+                                cop_family, marg_family)    
+                                
+    rho <- updateCopZIGammaMTDrho(rho, dat, dep_lag, data_label, mtdorder, step_size, alp, be, eps, Pi, 
+                                  cop_family, marg_family)
+    
+    yy_param1 <- rep(alp, trun_size)
+    yy_param2 <- rep(be, trun_size) 
+    yy_param3 <- rep(eps, trun_size)
+    yy_param4 <- rep(Pi, trun_size)
+    yy_ne_param1 <- matrix(rep(yy_param1, mtdorder), ncol = mtdorder) 
+    yy_ne_param2 <- matrix(rep(yy_param2, mtdorder), ncol = mtdorder) 
+    yy_ne_param3 <- matrix(rep(yy_param3, mtdorder), ncol = mtdorder)
+    yy_ne_param4 <- matrix(rep(yy_param4, mtdorder), ncol = mtdorder)
+    labels <- updateZIGMTDlabel(dat, lag_mat, mtdorder, weight, rho,
+                                cop_family, marg_family,
+                                yy_param1, yy_param2, yy_ne_param1, yy_ne_param2, 
+                                yy_param3, yy_param4, yy_ne_param3, yy_ne_param4)
+    data_label <- as.numeric(labels$data_label)
+    dep_lag <- as.numeric(labels$dep_lag)
+    unique_label <- as.numeric(names(table(data_label)))
+    n_j <- rep(0, mtdorder)
+    n_j[unique_label] <- as.numeric(table(data_label))
+    dat_rho <- rho[data_label]
+    
+    weight <- updateWeight(n_j, weight_param)
+    
+    end_time <- Sys.time()
+    block_runtime <- block_runtime + as.numeric(end_time - start_time)
+    
+    if (verbose) {
+      if (iter %% nreport == 0) {
+        cat(paste0("Iterations: ", iter, "/", niter, 
+                   "  Percentage: ", specRound(iter / niter * 100, 2), "%\n"))
+        ert <- (block_runtime / nreport) * (niter - iter)
+        cat(paste0("Estimated remaining time: ", 
+                   specRound(ert / 60, 2), " minutes \n"))
+        block_runtime <- 0
+        cat("--------------------------------------------\n")
+      }
+    }  
+
+    if (iter > nburn){
+      weight_save[, iter - nburn] <- weight
+      rho_save[, iter - nburn] <- rho
+      alp_save[iter - nburn] <- alp
+      be_save[iter - nburn] <- be
+      Pi_save[iter - nburn] <- Pi
+      eps_save[iter - nburn] <- eps
+    }
+  }
+
+  selc_index <- seq(1, niter - nburn, by = nthin)
+  list(weight = weight_save[, selc_index], 
+       rho = rho_save[, selc_index],
+       shape1 = alp_save[selc_index],
+       shape2 = be_save[selc_index],
+       Pi = Pi_save[selc_index],
+       eps = eps_save[selc_index]
+       )
+  
+} 
+
+##############################################################################
 ### Gibbs sampler for Poisson MTD
 ##############################################################################
 gibbsPMTD <- function(obs, mtdorder, weight_param, prior, tuning, starting, updateWeight, niter, nburn, nthin){
