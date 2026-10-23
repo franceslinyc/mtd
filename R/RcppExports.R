@@ -25,12 +25,44 @@ rqrRegLMTD <- function(obs, xx, weight, bb, alpha, phi) {
     .Call(`_mtd_rqrRegLMTD`, obs, xx, weight, bb, alpha, phi)
 }
 
+psgamma <- function(x, mu, beta, eps) {
+    .Call(`_mtd_psgamma`, x, mu, beta, eps)
+}
+
+pzig <- function(x, mu, beta, eps, pi) {
+    .Call(`_mtd_pzig`, x, mu, beta, eps, pi)
+}
+
+qsgamma <- function(x, mu, beta, eps) {
+    .Call(`_mtd_qsgamma`, x, mu, beta, eps)
+}
+
+qzig <- function(u, mu, beta, pi, eps) {
+    .Call(`_mtd_qzig`, u, mu, beta, pi, eps)
+}
+
+dBiCopMar_cpp <- function(xx, yy, cop_family, cop_param, marg_family, mar_param, ce = FALSE, logd = FALSE) {
+    .Call(`_mtd_dBiCopMar_cpp`, xx, yy, cop_family, cop_param, marg_family, mar_param, ce, logd)
+}
+
+dBiCopMar_cpp2 <- function(xx, yy, cop_family, cop_param, marg_family, mar_param, ce = FALSE, logd = FALSE) {
+    .Call(`_mtd_dBiCopMar_cpp2`, xx, yy, cop_family, cop_param, marg_family, mar_param, ce, logd)
+}
+
 updatePMTDut <- function(ut, dat, dep_lag, la, ga) {
     .Call(`_mtd_updatePMTDut`, ut, dat, dep_lag, la, ga)
 }
 
 updateNBMTDut <- function(ut, dat, dep_lag, th, alp, kap) {
     .Call(`_mtd_updateNBMTDut`, ut, dat, dep_lag, th, alp, kap)
+}
+
+updateCopGMTDlabel <- function(data, lags, mtdorder, weight, rho, cop_family, marg_family, yy_param1, yy_param2, yy_ne_param1, yy_ne_param2) {
+    .Call(`_mtd_updateCopGMTDlabel`, data, lags, mtdorder, weight, rho, cop_family, marg_family, yy_param1, yy_param2, yy_ne_param1, yy_ne_param2)
+}
+
+updateZIGMTDlabel <- function(data, lags, mtdorder, weight, rho, cop_family, marg_family, yy_param1, yy_param2, yy_ne_param1, yy_ne_param2, yy_param3, yy_param4, yy_ne_param3, yy_ne_param4) {
+    .Call(`_mtd_updateZIGMTDlabel`, data, lags, mtdorder, weight, rho, cop_family, marg_family, yy_param1, yy_param2, yy_ne_param1, yy_ne_param2, yy_param3, yy_param4, yy_ne_param3, yy_ne_param4)
 }
 
 updateGMTDlabel <- function(data, lags, mtdorder, weight, mu, sigma2, rho) {
@@ -55,5 +87,21 @@ predPMTD <- function(mtdorder, weight, lags, la, th, probs) {
 
 predNBMTD <- function(mtdorder, weight, lags, th, psi, kap, probs) {
     .Call(`_mtd_predNBMTD`, mtdorder, weight, lags, th, psi, kap, probs)
+}
+
+predCopGammaMTD <- function(mtdorder, weight, lags, alp, be, cop_family, rho, marg_family, probs) {
+    .Call(`_mtd_predCopGammaMTD`, mtdorder, weight, lags, alp, be, cop_family, rho, marg_family, probs)
+}
+
+predCopGammaMTD_2 <- function(mtdorder, weight, lags, alp, be, cop_family, rho, marg_family, probs) {
+    .Call(`_mtd_predCopGammaMTD_2`, mtdorder, weight, lags, alp, be, cop_family, rho, marg_family, probs)
+}
+
+predCopZIGammaMTD <- function(mtdorder, weight, lags, alp, be, Pi, eps, cop_family, rho, marg_family, probs) {
+    .Call(`_mtd_predCopZIGammaMTD`, mtdorder, weight, lags, alp, be, Pi, eps, cop_family, rho, marg_family, probs)
+}
+
+predCopZIGammaMTD_2 <- function(mtdorder, weight, lags, alp, be, Pi, eps, cop_family, rho, marg_family, probs) {
+    .Call(`_mtd_predCopZIGammaMTD_2`, mtdorder, weight, lags, alp, be, Pi, eps, cop_family, rho, marg_family, probs)
 }
 

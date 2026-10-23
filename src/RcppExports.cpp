@@ -101,6 +101,100 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// psgamma
+double psgamma(double x, double mu, double beta, double eps);
+RcppExport SEXP _mtd_psgamma(SEXP xSEXP, SEXP muSEXP, SEXP betaSEXP, SEXP epsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type x(xSEXP);
+    Rcpp::traits::input_parameter< double >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< double >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
+    rcpp_result_gen = Rcpp::wrap(psgamma(x, mu, beta, eps));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pzig
+double pzig(double x, double mu, double beta, double eps, double pi);
+RcppExport SEXP _mtd_pzig(SEXP xSEXP, SEXP muSEXP, SEXP betaSEXP, SEXP epsSEXP, SEXP piSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type x(xSEXP);
+    Rcpp::traits::input_parameter< double >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< double >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
+    Rcpp::traits::input_parameter< double >::type pi(piSEXP);
+    rcpp_result_gen = Rcpp::wrap(pzig(x, mu, beta, eps, pi));
+    return rcpp_result_gen;
+END_RCPP
+}
+// qsgamma
+double qsgamma(double x, double mu, double beta, double eps);
+RcppExport SEXP _mtd_qsgamma(SEXP xSEXP, SEXP muSEXP, SEXP betaSEXP, SEXP epsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type x(xSEXP);
+    Rcpp::traits::input_parameter< double >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< double >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
+    rcpp_result_gen = Rcpp::wrap(qsgamma(x, mu, beta, eps));
+    return rcpp_result_gen;
+END_RCPP
+}
+// qzig
+double qzig(double u, double mu, double beta, double pi, double eps);
+RcppExport SEXP _mtd_qzig(SEXP uSEXP, SEXP muSEXP, SEXP betaSEXP, SEXP piSEXP, SEXP epsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type u(uSEXP);
+    Rcpp::traits::input_parameter< double >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< double >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< double >::type pi(piSEXP);
+    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
+    rcpp_result_gen = Rcpp::wrap(qzig(u, mu, beta, pi, eps));
+    return rcpp_result_gen;
+END_RCPP
+}
+// dBiCopMar_cpp
+double dBiCopMar_cpp(const double& xx, const double& yy, const int& cop_family, const double& cop_param, const int& marg_family, const arma::colvec& mar_param, const bool& ce, const bool& logd);
+RcppExport SEXP _mtd_dBiCopMar_cpp(SEXP xxSEXP, SEXP yySEXP, SEXP cop_familySEXP, SEXP cop_paramSEXP, SEXP marg_familySEXP, SEXP mar_paramSEXP, SEXP ceSEXP, SEXP logdSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const double& >::type xx(xxSEXP);
+    Rcpp::traits::input_parameter< const double& >::type yy(yySEXP);
+    Rcpp::traits::input_parameter< const int& >::type cop_family(cop_familySEXP);
+    Rcpp::traits::input_parameter< const double& >::type cop_param(cop_paramSEXP);
+    Rcpp::traits::input_parameter< const int& >::type marg_family(marg_familySEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type mar_param(mar_paramSEXP);
+    Rcpp::traits::input_parameter< const bool& >::type ce(ceSEXP);
+    Rcpp::traits::input_parameter< const bool& >::type logd(logdSEXP);
+    rcpp_result_gen = Rcpp::wrap(dBiCopMar_cpp(xx, yy, cop_family, cop_param, marg_family, mar_param, ce, logd));
+    return rcpp_result_gen;
+END_RCPP
+}
+// dBiCopMar_cpp2
+arma::colvec dBiCopMar_cpp2(const arma::colvec& xx, const arma::colvec& yy, const int& cop_family, const arma::colvec cop_param, const int& marg_family, const arma::mat& mar_param, const bool& ce, const bool& logd);
+RcppExport SEXP _mtd_dBiCopMar_cpp2(SEXP xxSEXP, SEXP yySEXP, SEXP cop_familySEXP, SEXP cop_paramSEXP, SEXP marg_familySEXP, SEXP mar_paramSEXP, SEXP ceSEXP, SEXP logdSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::colvec& >::type xx(xxSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type yy(yySEXP);
+    Rcpp::traits::input_parameter< const int& >::type cop_family(cop_familySEXP);
+    Rcpp::traits::input_parameter< const arma::colvec >::type cop_param(cop_paramSEXP);
+    Rcpp::traits::input_parameter< const int& >::type marg_family(marg_familySEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type mar_param(mar_paramSEXP);
+    Rcpp::traits::input_parameter< const bool& >::type ce(ceSEXP);
+    Rcpp::traits::input_parameter< const bool& >::type logd(logdSEXP);
+    rcpp_result_gen = Rcpp::wrap(dBiCopMar_cpp2(xx, yy, cop_family, cop_param, marg_family, mar_param, ce, logd));
+    return rcpp_result_gen;
+END_RCPP
+}
 // updatePMTDut
 arma::colvec updatePMTDut(const arma::colvec& ut, const arma::colvec& dat, const arma::colvec& dep_lag, const double& la, const double& ga);
 RcppExport SEXP _mtd_updatePMTDut(SEXP utSEXP, SEXP datSEXP, SEXP dep_lagSEXP, SEXP laSEXP, SEXP gaSEXP) {
@@ -129,6 +223,52 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const double& >::type alp(alpSEXP);
     Rcpp::traits::input_parameter< const double& >::type kap(kapSEXP);
     rcpp_result_gen = Rcpp::wrap(updateNBMTDut(ut, dat, dep_lag, th, alp, kap));
+    return rcpp_result_gen;
+END_RCPP
+}
+// updateCopGMTDlabel
+List updateCopGMTDlabel(const arma::colvec& data, const arma::mat& lags, const int& mtdorder, const arma::colvec& weight, const arma::colvec& rho, const int& cop_family, const int& marg_family, const arma::colvec& yy_param1, const arma::colvec& yy_param2, const arma::mat& yy_ne_param1, const arma::mat& yy_ne_param2);
+RcppExport SEXP _mtd_updateCopGMTDlabel(SEXP dataSEXP, SEXP lagsSEXP, SEXP mtdorderSEXP, SEXP weightSEXP, SEXP rhoSEXP, SEXP cop_familySEXP, SEXP marg_familySEXP, SEXP yy_param1SEXP, SEXP yy_param2SEXP, SEXP yy_ne_param1SEXP, SEXP yy_ne_param2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::colvec& >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type lags(lagsSEXP);
+    Rcpp::traits::input_parameter< const int& >::type mtdorder(mtdorderSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type weight(weightSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type rho(rhoSEXP);
+    Rcpp::traits::input_parameter< const int& >::type cop_family(cop_familySEXP);
+    Rcpp::traits::input_parameter< const int& >::type marg_family(marg_familySEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type yy_param1(yy_param1SEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type yy_param2(yy_param2SEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type yy_ne_param1(yy_ne_param1SEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type yy_ne_param2(yy_ne_param2SEXP);
+    rcpp_result_gen = Rcpp::wrap(updateCopGMTDlabel(data, lags, mtdorder, weight, rho, cop_family, marg_family, yy_param1, yy_param2, yy_ne_param1, yy_ne_param2));
+    return rcpp_result_gen;
+END_RCPP
+}
+// updateZIGMTDlabel
+List updateZIGMTDlabel(const arma::colvec& data, const arma::mat& lags, const int& mtdorder, const arma::colvec& weight, const arma::colvec& rho, const int& cop_family, const int& marg_family, const arma::colvec& yy_param1, const arma::colvec& yy_param2, const arma::mat& yy_ne_param1, const arma::mat& yy_ne_param2, const arma::colvec& yy_param3, const arma::colvec& yy_param4, const arma::mat& yy_ne_param3, const arma::mat& yy_ne_param4);
+RcppExport SEXP _mtd_updateZIGMTDlabel(SEXP dataSEXP, SEXP lagsSEXP, SEXP mtdorderSEXP, SEXP weightSEXP, SEXP rhoSEXP, SEXP cop_familySEXP, SEXP marg_familySEXP, SEXP yy_param1SEXP, SEXP yy_param2SEXP, SEXP yy_ne_param1SEXP, SEXP yy_ne_param2SEXP, SEXP yy_param3SEXP, SEXP yy_param4SEXP, SEXP yy_ne_param3SEXP, SEXP yy_ne_param4SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::colvec& >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type lags(lagsSEXP);
+    Rcpp::traits::input_parameter< const int& >::type mtdorder(mtdorderSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type weight(weightSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type rho(rhoSEXP);
+    Rcpp::traits::input_parameter< const int& >::type cop_family(cop_familySEXP);
+    Rcpp::traits::input_parameter< const int& >::type marg_family(marg_familySEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type yy_param1(yy_param1SEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type yy_param2(yy_param2SEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type yy_ne_param1(yy_ne_param1SEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type yy_ne_param2(yy_ne_param2SEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type yy_param3(yy_param3SEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type yy_param4(yy_param4SEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type yy_ne_param3(yy_ne_param3SEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type yy_ne_param4(yy_ne_param4SEXP);
+    rcpp_result_gen = Rcpp::wrap(updateZIGMTDlabel(data, lags, mtdorder, weight, rho, cop_family, marg_family, yy_param1, yy_param2, yy_ne_param1, yy_ne_param2, yy_param3, yy_param4, yy_ne_param3, yy_ne_param4));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -232,6 +372,86 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// predCopGammaMTD
+arma::mat predCopGammaMTD(const int& mtdorder, const arma::mat& weight, const arma::mat& lags, const arma::colvec& alp, const arma::colvec& be, const int& cop_family, const arma::mat& rho, const int& marg_family, const arma::colvec& probs);
+RcppExport SEXP _mtd_predCopGammaMTD(SEXP mtdorderSEXP, SEXP weightSEXP, SEXP lagsSEXP, SEXP alpSEXP, SEXP beSEXP, SEXP cop_familySEXP, SEXP rhoSEXP, SEXP marg_familySEXP, SEXP probsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int& >::type mtdorder(mtdorderSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type weight(weightSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type lags(lagsSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type alp(alpSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type be(beSEXP);
+    Rcpp::traits::input_parameter< const int& >::type cop_family(cop_familySEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type rho(rhoSEXP);
+    Rcpp::traits::input_parameter< const int& >::type marg_family(marg_familySEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type probs(probsSEXP);
+    rcpp_result_gen = Rcpp::wrap(predCopGammaMTD(mtdorder, weight, lags, alp, be, cop_family, rho, marg_family, probs));
+    return rcpp_result_gen;
+END_RCPP
+}
+// predCopGammaMTD_2
+arma::mat predCopGammaMTD_2(const int& mtdorder, const arma::mat& weight, const arma::mat& lags, const arma::colvec& alp, const arma::colvec& be, const int& cop_family, const arma::mat& rho, const int& marg_family, const arma::colvec& probs);
+RcppExport SEXP _mtd_predCopGammaMTD_2(SEXP mtdorderSEXP, SEXP weightSEXP, SEXP lagsSEXP, SEXP alpSEXP, SEXP beSEXP, SEXP cop_familySEXP, SEXP rhoSEXP, SEXP marg_familySEXP, SEXP probsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int& >::type mtdorder(mtdorderSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type weight(weightSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type lags(lagsSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type alp(alpSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type be(beSEXP);
+    Rcpp::traits::input_parameter< const int& >::type cop_family(cop_familySEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type rho(rhoSEXP);
+    Rcpp::traits::input_parameter< const int& >::type marg_family(marg_familySEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type probs(probsSEXP);
+    rcpp_result_gen = Rcpp::wrap(predCopGammaMTD_2(mtdorder, weight, lags, alp, be, cop_family, rho, marg_family, probs));
+    return rcpp_result_gen;
+END_RCPP
+}
+// predCopZIGammaMTD
+arma::mat predCopZIGammaMTD(const int& mtdorder, const arma::mat& weight, const arma::mat& lags, const arma::colvec& alp, const arma::colvec& be, const arma::colvec& Pi, const arma::colvec& eps, const int& cop_family, const arma::mat& rho, const int& marg_family, const arma::colvec& probs);
+RcppExport SEXP _mtd_predCopZIGammaMTD(SEXP mtdorderSEXP, SEXP weightSEXP, SEXP lagsSEXP, SEXP alpSEXP, SEXP beSEXP, SEXP PiSEXP, SEXP epsSEXP, SEXP cop_familySEXP, SEXP rhoSEXP, SEXP marg_familySEXP, SEXP probsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int& >::type mtdorder(mtdorderSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type weight(weightSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type lags(lagsSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type alp(alpSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type be(beSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type Pi(PiSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type eps(epsSEXP);
+    Rcpp::traits::input_parameter< const int& >::type cop_family(cop_familySEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type rho(rhoSEXP);
+    Rcpp::traits::input_parameter< const int& >::type marg_family(marg_familySEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type probs(probsSEXP);
+    rcpp_result_gen = Rcpp::wrap(predCopZIGammaMTD(mtdorder, weight, lags, alp, be, Pi, eps, cop_family, rho, marg_family, probs));
+    return rcpp_result_gen;
+END_RCPP
+}
+// predCopZIGammaMTD_2
+arma::mat predCopZIGammaMTD_2(const int& mtdorder, const arma::mat& weight, const arma::mat& lags, const arma::colvec& alp, const arma::colvec& be, const arma::colvec& Pi, const arma::colvec& eps, const int& cop_family, const arma::mat& rho, const int& marg_family, const arma::colvec& probs);
+RcppExport SEXP _mtd_predCopZIGammaMTD_2(SEXP mtdorderSEXP, SEXP weightSEXP, SEXP lagsSEXP, SEXP alpSEXP, SEXP beSEXP, SEXP PiSEXP, SEXP epsSEXP, SEXP cop_familySEXP, SEXP rhoSEXP, SEXP marg_familySEXP, SEXP probsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int& >::type mtdorder(mtdorderSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type weight(weightSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type lags(lagsSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type alp(alpSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type be(beSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type Pi(PiSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type eps(epsSEXP);
+    Rcpp::traits::input_parameter< const int& >::type cop_family(cop_familySEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type rho(rhoSEXP);
+    Rcpp::traits::input_parameter< const int& >::type marg_family(marg_familySEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type probs(probsSEXP);
+    rcpp_result_gen = Rcpp::wrap(predCopZIGammaMTD_2(mtdorder, weight, lags, alp, be, Pi, eps, cop_family, rho, marg_family, probs));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_mtd_dCondBiPois", (DL_FUNC) &_mtd_dCondBiPois, 5},
@@ -240,14 +460,26 @@ static const R_CallMethodDef CallEntries[] = {
     {"_mtd_rqrPMTD", (DL_FUNC) &_mtd_rqrPMTD, 4},
     {"_mtd_pLMTD", (DL_FUNC) &_mtd_pLMTD, 5},
     {"_mtd_rqrRegLMTD", (DL_FUNC) &_mtd_rqrRegLMTD, 6},
+    {"_mtd_psgamma", (DL_FUNC) &_mtd_psgamma, 4},
+    {"_mtd_pzig", (DL_FUNC) &_mtd_pzig, 5},
+    {"_mtd_qsgamma", (DL_FUNC) &_mtd_qsgamma, 4},
+    {"_mtd_qzig", (DL_FUNC) &_mtd_qzig, 5},
+    {"_mtd_dBiCopMar_cpp", (DL_FUNC) &_mtd_dBiCopMar_cpp, 8},
+    {"_mtd_dBiCopMar_cpp2", (DL_FUNC) &_mtd_dBiCopMar_cpp2, 8},
     {"_mtd_updatePMTDut", (DL_FUNC) &_mtd_updatePMTDut, 5},
     {"_mtd_updateNBMTDut", (DL_FUNC) &_mtd_updateNBMTDut, 6},
+    {"_mtd_updateCopGMTDlabel", (DL_FUNC) &_mtd_updateCopGMTDlabel, 11},
+    {"_mtd_updateZIGMTDlabel", (DL_FUNC) &_mtd_updateZIGMTDlabel, 15},
     {"_mtd_updateGMTDlabel", (DL_FUNC) &_mtd_updateGMTDlabel, 7},
     {"_mtd_updatePMTDlabel", (DL_FUNC) &_mtd_updatePMTDlabel, 6},
     {"_mtd_updateNBMTDlabel", (DL_FUNC) &_mtd_updateNBMTDlabel, 8},
     {"_mtd_updateLMTDlabel", (DL_FUNC) &_mtd_updateLMTDlabel, 6},
     {"_mtd_predPMTD", (DL_FUNC) &_mtd_predPMTD, 6},
     {"_mtd_predNBMTD", (DL_FUNC) &_mtd_predNBMTD, 7},
+    {"_mtd_predCopGammaMTD", (DL_FUNC) &_mtd_predCopGammaMTD, 9},
+    {"_mtd_predCopGammaMTD_2", (DL_FUNC) &_mtd_predCopGammaMTD_2, 9},
+    {"_mtd_predCopZIGammaMTD", (DL_FUNC) &_mtd_predCopZIGammaMTD, 11},
+    {"_mtd_predCopZIGammaMTD_2", (DL_FUNC) &_mtd_predCopZIGammaMTD_2, 11},
     {NULL, NULL, 0}
 };
 
