@@ -463,47 +463,61 @@ rCopGammaMTD <- function(mtdorder, weight, rho, shape, rate, size, trun, init_da
   y <- array(NA, dim = size)
 
   if (trun) {
-    y[1:mtdorder] <- qnorm(pgamma(init_data, shape = shape, rate = rate))
+    u <- pgamma(init_data, shape = shape, rate = rate)
+    z <- qnorm(u, mean = 0, sd = 1)
+    y[1:mtdorder] <- z
     label <- sample(1:mtdorder, size = size - mtdorder, replace = TRUE, prob = weight)
     lags <- array(NA, length(label))
 
+    mu_star <- 0
+    sigma2_star <- 1
     for (i in (mtdorder + 1):size) {
       ilabel <- label[i - mtdorder]
       ilag <- y[i - ilabel]
       lags[i - mtdorder] <- ilag
-      y[i] <- rnorm(1, rho[ilabel] * ilag, sqrt(1 - rho[ilabel]^2))
+      y[i] <- rnorm(1, mu_star + rho[ilabel] * (ilag - mu_star),
+                    sqrt(sigma2_star * (1 - rho[ilabel]^2)))
     }
   } else {
     label <- array(NA, dim = size)
     lags <- array(NA, dim = size)
     x <- rgamma(1, shape = shape, rate = rate)
-    y[1] <- qnorm(pgamma(x, shape = shape, rate = rate))
+    u <- pgamma(x, shape = shape, rate = rate)
+    z <- qnorm(u, mean = 0, sd = 1)
+    y[1] <- z
     lags[2] <- y[1]
-    y[2] <- rnorm(1, rho[1] * lags[2], sqrt(1 - rho[1]^2))
+    mu_star <- 0
+    sigma2_star <- 1
+    y[2] <- rnorm(1, mu_star + rho[1] * (lags[2] - mu_star),
+                  sqrt(sigma2_star * (1 - rho[1]^2)))
 
     if (mtdorder > 2) {
+      mu_star <- 0
+      sigma2_star <- 1
       for (i in 3:mtdorder) {
-        ilabel <- sample(1:(i - 1), size = 1, prob = weight[1:(i - 1)])
+        iweight <- weight[1:(i - 1)]
+        ilabel <- sample(1:(i - 1), size = 1, prob = iweight)
         label[i] <- ilabel
         ilag <- y[i - ilabel]
         lags[i] <- ilag
-        y[i] <- rnorm(1, rho[ilabel] * ilag, sqrt(1 - rho[ilabel]^2))
+        y[i] <- rnorm(1, mu_star + rho[ilabel] * (ilag - mu_star),
+                      sqrt(sigma2_star * (1 - rho[ilabel]^2)))
       }
     }
 
-    label[(mtdorder + 1):size] <- sample(1:mtdorder, size = size - mtdorder,
-                                        replace = TRUE, prob = weight)
+    label[(mtdorder + 1):size] <- sample(1:mtdorder, size = size - mtdorder, replace = TRUE, prob = weight)
     for (i in (mtdorder + 1):size) {
       ilabel <- label[i]
       ilag <- y[i - ilabel]
       lags[i] <- ilag
-      y[i] <- rnorm(1, rho[ilabel] * ilag, sqrt(1 - rho[ilabel]^2))
+      y[i] <- rnorm(1, mu_star + rho[ilabel] * (ilag - mu_star),
+                    sqrt(sigma2_star * (1 - rho[ilabel]^2)))
     }
   }
 
-  u <- pnorm(y)
+  u <- pnorm(y, mean = 0, sd = 1)
   y <- qgamma(u, shape = shape, rate = rate)
-  u_lags <- pnorm(lags)
+  u_lags <- pnorm(lags, mean = 0, sd = 1)
   lags <- qgamma(u_lags, shape = shape, rate = rate)
 
   list(y = y, label = label, lags = lags)
@@ -513,43 +527,55 @@ rCopZIGammaMTD <- function(mtdorder, weight, rho, mu, beta, epsilon, Pi, size, t
   y <- array(NA, dim = size)
 
   if (trun) {
-    u <- pzig(init_data, mu, beta, epsilon, Pi)
-    y[1:mtdorder] <- qnorm(u)
+    u <- pzig(init_data, mu = mu, beta = beta, epsilon = epsilon, Pi = Pi)
+    z <- qnorm(u, mean = 0, sd = 1)
+    y[1:mtdorder] <- z
     label <- sample(1:mtdorder, size = size - mtdorder, replace = TRUE, prob = weight)
     lags <- array(NA, length(label))
 
+    mu_star <- 0
+    sigma2_star <- 1
     for (i in (mtdorder + 1):size) {
       ilabel <- label[i - mtdorder]
       ilag <- y[i - ilabel]
       lags[i - mtdorder] <- ilag
-      y[i] <- rnorm(1, rho[ilabel] * ilag, sqrt(1 - rho[ilabel]^2))
+      y[i] <- rnorm(1, mu_star + rho[ilabel] * (ilag - mu_star),
+                    sqrt(sigma2_star * (1 - rho[ilabel]^2)))
     }
   } else {
     label <- array(NA, dim = size)
     lags <- array(NA, dim = size)
     x <- rzig(1, mu, beta, epsilon, Pi)
-    u <- pzig(x, mu, beta, epsilon, Pi)
-    y[1] <- qnorm(u)
+    u <- pzig(x, mu = mu, beta = beta, epsilon = epsilon, Pi = Pi)
+    z <- qnorm(u, mean = 0, sd = 1)
+    y[1] <- z
     lags[2] <- y[1]
-    y[2] <- rnorm(1, rho[1] * lags[2], sqrt(1 - rho[1]^2))
+    mu_star <- 0
+    sigma2_star <- 1
+    y[2] <- rnorm(1, mu_star + rho[1] * (lags[2] - mu_star),
+                  sqrt(sigma2_star * (1 - rho[1]^2)))
 
     if (mtdorder > 2) {
+      mu_star <- 0
+      sigma2_star <- 1
       for (i in 3:mtdorder) {
-        ilabel <- sample(1:(i - 1), size = 1, prob = weight[1:(i - 1)])
+        iweight <- weight[1:(i - 1)]
+        ilabel <- sample(1:(i - 1), size = 1, prob = iweight)
         label[i] <- ilabel
         ilag <- y[i - ilabel]
         lags[i] <- ilag
-        y[i] <- rnorm(1, rho[ilabel] * ilag, sqrt(1 - rho[ilabel]^2))
+        y[i] <- rnorm(1, mu_star + rho[ilabel] * (ilag - mu_star),
+                      sqrt(sigma2_star * (1 - rho[ilabel]^2)))
       }
     }
 
-    label[(mtdorder + 1):size] <- sample(1:mtdorder, size = size - mtdorder,
-                                        replace = TRUE, prob = weight)
+    label[(mtdorder + 1):size] <- sample(1:mtdorder, size = size - mtdorder, replace = TRUE, prob = weight)
     for (i in (mtdorder + 1):size) {
       ilabel <- label[i]
       ilag <- y[i - ilabel]
       lags[i] <- ilag
-      y[i] <- rnorm(1, rho[ilabel] * ilag, sqrt(1 - rho[ilabel]^2))
+      y[i] <- rnorm(1, mu_star + rho[ilabel] * (ilag - mu_star),
+                    sqrt(sigma2_star * (1 - rho[ilabel]^2)))
     }
   }
 
