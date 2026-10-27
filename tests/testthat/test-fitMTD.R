@@ -61,12 +61,38 @@ test_that("tsMTD validates its basic arguments", {
 })
 
 gamma_copula_setup <- function() {
-  set.seed(10)
+  set.seed(24)
+  J <- 5
+  expDecay <- function(x, la) exp(-la * x)
+  true_weight <- expDecay(1:J, 1)
+  true_weight <- true_weight / sum(true_weight)
+  param <- list(rho = c(0.7, 0.5, 0.3, 0.1, 0.1), shape = 7, rate = 1)
+  obs <- rMTD(J, true_weight, "gamma", param, size = 80, trun = FALSE)$y
+
   list(
-    obs = rgamma(80, shape = 2, scale = 1.5),
+    obs = obs,
     prior = list(alpha = 1, u_alp = 2, v_alp = 1, u_be = 2, v_be = 1),
-    tuning = list(step_size = 0.15, upper_alp = 8, upper_be = 4),
-    starting = list(rho = c(0.2, 0.35), alp = 2, be = 1.5),
+    tuning = list(step_size = 0.15, upper_alp = 12, upper_be = 4),
+    starting = list(rho = rep(0.3, J), alp = 7, be = 1),
+    mcmc_param = list(niter = 12, nburn = 6, nthin = 2)
+  )
+}
+
+zigamma_copula_setup <- function() {
+  set.seed(24)
+  J <- 5
+  expDecay <- function(x, la) exp(-la * x)
+  true_weight <- expDecay(1:J, 1)
+  true_weight <- true_weight / sum(true_weight)
+  param <- list(rho = c(0.7, 0.5, 0.3, 0.1, 0.1),
+                mu = 7, beta = 1, epsilon = 0.3, Pi = 0.25)
+  obs <- rMTD(J, true_weight, "zigamma", param, size = 80, trun = FALSE)$y
+
+  list(
+    obs = obs,
+    prior = list(alpha = 1, u_alp = 2, v_alp = 1, u_be = 2, v_be = 1),
+    tuning = list(step_size = 0.15, upper_alp = 12, upper_be = 4),
+    starting = list(rho = rep(0.3, J), alp = 7, be = 1, eps = param$epsilon, Pi = param$Pi),
     mcmc_param = list(niter = 12, nburn = 6, nthin = 2)
   )
 }
@@ -74,12 +100,12 @@ gamma_copula_setup <- function() {
 test_that("tsMTD runs the Gamma copula sampler", {
   s <- gamma_copula_setup()
   set.seed(11)
-  fit <- tsMTD(s$obs, 2, "gamma", "sb", s$prior, s$tuning, s$starting,
+  fit <- tsMTD(s$obs, 5, "gamma", "sb", s$prior, s$tuning, s$starting,
                s$mcmc_param, cop_family = 1)
 
   expect_named(fit, c("weight", "rho", "shape1", "shape2"))
-  expect_equal(dim(fit$weight), c(2, 3))
-  expect_equal(dim(fit$rho), c(2, 3))
+  expect_equal(dim(fit$weight), c(5, 3))
+  expect_equal(dim(fit$rho), c(5, 3))
   expect_true(all(is.finite(unlist(fit))))
   expect_equal(colSums(fit$weight), rep(1, 3))
   expect_true(all(fit$shape1 > 0))
@@ -87,18 +113,13 @@ test_that("tsMTD runs the Gamma copula sampler", {
 })
 
 test_that("tsMTD runs the ZI Gamma copula sampler with fixed eps", {
-  s <- gamma_copula_setup()
-  set.seed(12)
-  s$obs <- ifelse(runif(80) < 0.25, runif(80, 0, 0.3), rgamma(80, 2 / 1.5, scale = 1.5) + 0.3)
-  s$starting$eps <- 0.3
-  s$starting$Pi <- 0.25
-  set.seed(13)
-  fit <- tsMTD(s$obs, 2, "zigamma", "sb", s$prior, s$tuning, s$starting,
+  s <- zigamma_copula_setup()
+  fit <- tsMTD(s$obs, 5, "zigamma", "sb", s$prior, s$tuning, s$starting,
                s$mcmc_param, cop_family = 1)
 
   expect_named(fit, c("weight", "rho", "shape1", "shape2", "Pi", "eps"))
-  expect_equal(dim(fit$weight), c(2, 3))
-  expect_equal(dim(fit$rho), c(2, 3))
+  expect_equal(dim(fit$weight), c(5, 3))
+  expect_equal(dim(fit$rho), c(5, 3))
   expect_true(all(is.finite(unlist(fit))))
   expect_equal(colSums(fit$weight), rep(1, 3))
   expect_true(all(fit$shape1 > 0))
@@ -110,11 +131,11 @@ test_that("tsMTD runs the ZI Gamma copula sampler with fixed eps", {
 test_that("tsMTD requires supported copula settings for Gamma families", {
   s <- gamma_copula_setup()
   expect_error(
-    tsMTD(s$obs, 2, "gamma", "sb", s$prior, s$tuning, s$starting, s$mcmc_param),
+    tsMTD(s$obs, 5, "gamma", "sb", s$prior, s$tuning, s$starting, s$mcmc_param),
     "cop_family must be specified"
   )
   expect_error(
-    tsMTD(s$obs, 2, "zigamma", "sb", s$prior, s$tuning, s$starting, s$mcmc_param,
+    tsMTD(s$obs, 5, "zigamma", "sb", s$prior, s$tuning, s$starting, s$mcmc_param,
           cop_family = 2),
     "only cop_family = 1"
   )
