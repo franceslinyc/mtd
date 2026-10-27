@@ -65,7 +65,7 @@ rMTD <- function(mtdorder, weight, family, param, size, trun = FALSE, init_data 
   }
   
   family <- tolower(family)
-  family_names <- c("gaussian", "poisson", "negative binomial", "lomax")
+  family_names <- c("gaussian", "poisson", "negative binomial", "lomax", "gamma", "zigamma")
   
   if (!family %in% family_names) {
     stop("error: specified family '", family, "' is not a valid option;
@@ -159,7 +159,43 @@ rMTD <- function(mtdorder, weight, family, param, size, trun = FALSE, init_data 
     
     rLMTD(mtdorder, weight, alpha, phi, size, init_data)
     
-  } 
+  }
+  else if (family == "gamma") {
+    rho <- param$rho
+    shape <- param$shape
+    rate <- param$rate
+
+    if (is.null(rho)) stop("error: rho must be specified.")
+    if (length(rho) != mtdorder) stop("error: rho must have length mtdorder.")
+    if (any(abs(rho) >= 1)) stop("error: each rho value must be between -1 and 1.")
+    if (is.null(shape)) stop("error: shape must be specified.")
+    if (is.null(rate)) stop("error: rate must be specified.")
+    if (shape <= 0) stop("error: shape must be positive.")
+    if (rate <= 0) stop("error: rate must be positive.")
+
+    rCopGammaMTD(mtdorder, weight, rho, shape, rate, size, trun, init_data)
+  }
+  else if (family == "zigamma") {
+    rho <- param$rho
+    mu <- param$mu
+    beta <- param$beta
+    epsilon <- param$epsilon
+    Pi <- param$Pi
+
+    if (is.null(rho)) stop("error: rho must be specified.")
+    if (length(rho) != mtdorder) stop("error: rho must have length mtdorder.")
+    if (any(abs(rho) >= 1)) stop("error: each rho value must be between -1 and 1.")
+    if (is.null(mu)) stop("error: mu must be specified.")
+    if (is.null(beta)) stop("error: beta must be specified.")
+    if (is.null(epsilon)) stop("error: epsilon must be specified.")
+    if (is.null(Pi)) stop("error: Pi must be specified.")
+    if (mu <= 0) stop("error: mu must be positive.")
+    if (beta <= 0) stop("error: beta must be positive.")
+    if (epsilon <= 0) stop("error: epsilon must be positive.")
+    if (Pi <= 0 || Pi >= 1) stop("error: Pi must be between 0 and 1.")
+
+    rCopZIGammaMTD(mtdorder, weight, rho, mu, beta, epsilon, Pi, size, trun, init_data)
+  }
   
 }
 
@@ -421,4 +457,107 @@ rLMTD <- function(mtdorder, weight, alpha, phi, size, init_data){
 
   list(y = y, label = label, lags = lags)
   
+}
+
+rCopGammaMTD <- function(mtdorder, weight, rho, shape, rate, size, trun, init_data) {
+  y <- array(NA, dim = size)
+
+  if (trun) {
+    y[1:mtdorder] <- qnorm(pgamma(init_data, shape = shape, rate = rate))
+    label <- sample(1:mtdorder, size = size - mtdorder, replace = TRUE, prob = weight)
+    lags <- array(NA, length(label))
+
+    for (i in (mtdorder + 1):size) {
+      ilabel <- label[i - mtdorder]
+      ilag <- y[i - ilabel]
+      lags[i - mtdorder] <- ilag
+      y[i] <- rnorm(1, rho[ilabel] * ilag, sqrt(1 - rho[ilabel]^2))
+    }
+  } else {
+    label <- array(NA, dim = size)
+    lags <- array(NA, dim = size)
+    x <- rgamma(1, shape = shape, rate = rate)
+    y[1] <- qnorm(pgamma(x, shape = shape, rate = rate))
+    lags[2] <- y[1]
+    y[2] <- rnorm(1, rho[1] * lags[2], sqrt(1 - rho[1]^2))
+
+    if (mtdorder > 2) {
+      for (i in 3:mtdorder) {
+        ilabel <- sample(1:(i - 1), size = 1, prob = weight[1:(i - 1)])
+        label[i] <- ilabel
+        ilag <- y[i - ilabel]
+        lags[i] <- ilag
+        y[i] <- rnorm(1, rho[ilabel] * ilag, sqrt(1 - rho[ilabel]^2))
+      }
+    }
+
+    label[(mtdorder + 1):size] <- sample(1:mtdorder, size = size - mtdorder,
+                                        replace = TRUE, prob = weight)
+    for (i in (mtdorder + 1):size) {
+      ilabel <- label[i]
+      ilag <- y[i - ilabel]
+      lags[i] <- ilag
+      y[i] <- rnorm(1, rho[ilabel] * ilag, sqrt(1 - rho[ilabel]^2))
+    }
+  }
+
+  u <- pnorm(y)
+  y <- qgamma(u, shape = shape, rate = rate)
+  u_lags <- pnorm(lags)
+  lags <- qgamma(u_lags, shape = shape, rate = rate)
+
+  list(y = y, label = label, lags = lags)
+}
+
+rCopZIGammaMTD <- function(mtdorder, weight, rho, mu, beta, epsilon, Pi, size, trun, init_data) {
+  y <- array(NA, dim = size)
+
+  if (trun) {
+    u <- pzig(init_data, mu, beta, epsilon, Pi)
+    y[1:mtdorder] <- qnorm(u)
+    label <- sample(1:mtdorder, size = size - mtdorder, replace = TRUE, prob = weight)
+    lags <- array(NA, length(label))
+
+    for (i in (mtdorder + 1):size) {
+      ilabel <- label[i - mtdorder]
+      ilag <- y[i - ilabel]
+      lags[i - mtdorder] <- ilag
+      y[i] <- rnorm(1, rho[ilabel] * ilag, sqrt(1 - rho[ilabel]^2))
+    }
+  } else {
+    label <- array(NA, dim = size)
+    lags <- array(NA, dim = size)
+    x <- rzig(1, mu, beta, epsilon, Pi)
+    u <- pzig(x, mu, beta, epsilon, Pi)
+    y[1] <- qnorm(u)
+    lags[2] <- y[1]
+    y[2] <- rnorm(1, rho[1] * lags[2], sqrt(1 - rho[1]^2))
+
+    if (mtdorder > 2) {
+      for (i in 3:mtdorder) {
+        ilabel <- sample(1:(i - 1), size = 1, prob = weight[1:(i - 1)])
+        label[i] <- ilabel
+        ilag <- y[i - ilabel]
+        lags[i] <- ilag
+        y[i] <- rnorm(1, rho[ilabel] * ilag, sqrt(1 - rho[ilabel]^2))
+      }
+    }
+
+    label[(mtdorder + 1):size] <- sample(1:mtdorder, size = size - mtdorder,
+                                        replace = TRUE, prob = weight)
+    for (i in (mtdorder + 1):size) {
+      ilabel <- label[i]
+      ilag <- y[i - ilabel]
+      lags[i] <- ilag
+      y[i] <- rnorm(1, rho[ilabel] * ilag, sqrt(1 - rho[ilabel]^2))
+    }
+  }
+
+  u <- pnorm(y, mean = 0, sd = 1)
+  y <- qzig(u, mu = mu, beta = beta, epsilon = epsilon, Pi = Pi)
+  u_lags <- pnorm(lags, mean = 0, sd = 1)
+  lags <- qzig(u_lags, mu = mu, beta = beta, epsilon = epsilon, Pi = Pi)
+
+  list(y = y, label = label, lags = lags)
+
 }

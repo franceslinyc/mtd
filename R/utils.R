@@ -126,3 +126,33 @@ specCI <- function(x, lower_prob = 0.025, upper_prob = 0.975, k = 2){
   ci <- paste0('(', specRound(q[1],k), ', ', specRound(q[2],k), ')')
   ci
 }
+
+psgamma <- function(y, mu, beta, epsilon) {
+  (y >= epsilon) * pgamma(y - epsilon, shape = mu / beta, scale = beta)
+}
+
+pzig <- function(y, mu, beta, epsilon, Pi) {
+  Pi * punif(y, 0, epsilon) + (1 - Pi) * psgamma(y, mu, beta, epsilon)
+}
+
+qsgamma <- function(y, mu, beta, epsilon) {
+  qgamma(y, shape = mu / beta, scale = beta) + epsilon
+}
+
+qzig <- function(u, mu, beta, epsilon, Pi) {
+  result <- u
+  uniform <- !is.na(u) & u <= Pi
+  gamma <- !is.na(u) & u > Pi
+  result[uniform] <- qunif(u[uniform] / Pi, 0, epsilon)
+  result[gamma] <- qsgamma((u[gamma] - Pi) / (1 - Pi), mu, beta, epsilon)
+  result
+}
+
+rsgamma <- function(n, mu, beta, epsilon) {
+  epsilon + rgamma(n, shape = mu / beta, scale = beta)
+}
+
+rzig <- function(n, mu, beta, epsilon, Pi) {
+  p <- rbinom(n, 1, Pi)
+  p * runif(n, 0, epsilon) + (1 - p) * rsgamma(n, mu, beta, epsilon)
+}
