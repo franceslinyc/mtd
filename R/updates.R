@@ -53,8 +53,212 @@ updateGMTDrho <- function(rho, dat, dep_lag, data_label, mtdorder, step_size, mu
 }
 
 ##############################################################################
+### updates for the Copula Gaussian MTD
+##############################################################################
+
+updateCopGMTDmu <- function(mu, dat, dep_lag, mu_0, sigma2_0, dat_rho, sigma2, trun_size, step_size,
+                            cop_family, marg_family, lower_mu, upper_mu) {
+  logpmu <- function(x, dat, dep_lag, cop_family, marg_family) {
+    mar_param <- cbind(rep(x, trun_size), rep(sqrt(sigma2), trun_size),
+                       rep(x, trun_size), rep(sqrt(sigma2), trun_size))
+
+    dnorm(x, mu_0, sqrt(sigma2_0), log = TRUE) +
+      sum(dBiCopMar_cpp2(dat, dep_lag, cop_family, dat_rho, marg_family, mar_param, FALSE, TRUE)) +
+      sum(dnorm(dat, x, sqrt(sigma2), log = TRUE))
+  }
+
+  uniSlice(x0 = mu, g = logpmu, w = step_size, m = Inf,
+           lower = lower_mu, upper = upper_mu, dat, dep_lag, cop_family, marg_family)
+}
+
+updateCopGMTDsigma2 <- function(sigma2, dat, dep_lag, u_0, v_0, dat_rho, mu, trun_size, step_size,
+                                cop_family, marg_family, lower_sigma2, upper_sigma2) {
+  logpsigma2 <- function(x, dat, dep_lag, cop_family, marg_family) {
+    mar_param <- cbind(rep(mu, trun_size), rep(sqrt(x), trun_size),
+                       rep(mu, trun_size), rep(sqrt(x), trun_size))
+
+    dgamma(1 / x, u_0, v_0, log = TRUE) + 2 * log(1 / x) +
+      sum(dBiCopMar_cpp2(dat, dep_lag, cop_family, dat_rho, marg_family, mar_param, FALSE, TRUE)) +
+      sum(dnorm(dat, mu, sqrt(x), log = TRUE))
+  }
+
+  uniSlice(x0 = sigma2, g = logpsigma2, w = step_size, m = Inf,
+           lower = lower_sigma2, upper = upper_sigma2, dat, dep_lag, cop_family, marg_family)
+}
+
+updateCopGMTDrho <- function(rho, dat, dep_lag, data_label, mtdorder, step_size, mu, sigma2,
+                             cop_family, marg_family) {
+  for (l in 1:mtdorder) {
+    dd_l <- dat[which(data_label == l)]
+    lags_l <- dep_lag[which(data_label == l)]
+
+    logprho <- function(x, dd, lags, cop_family, marg_family) {
+      trun_size <- length(dd)
+      mar_param <- cbind(rep(mu, trun_size), rep(sqrt(sigma2), trun_size),
+                         rep(mu, trun_size), rep(sqrt(sigma2), trun_size))
+      x_vec <- rep(x, trun_size)
+      sum(dBiCopMar_cpp2(dd, lags, cop_family, x_vec, marg_family, mar_param, FALSE, TRUE))
+    }
+
+    rho[l] <- uniSlice(x0 = rho[l], g = logprho, w = step_size, m = Inf,
+                       lower = -1, upper = 1, dd_l, lags_l, cop_family, marg_family)
+  }
+  rho
+}
+
+##############################################################################
+### updates for the Copula Gamma MTD
+##############################################################################
+
+updateCopGammaMTDalp <- function(alp, dat, dep_lag, u_alp, v_alp, dat_rho, be, trun_size, step_size,
+                                 cop_family, marg_family, upper_alp) {
+  logpalp <- function(x, dat, dep_lag, cop_family, marg_family) {
+    mar_param <- cbind(rep(x, trun_size), rep(be, trun_size),
+                       rep(x, trun_size), rep(be, trun_size))
+
+    dgamma(x, u_alp, v_alp, log = TRUE) +
+      sum(dBiCopMar_cpp2(dat, dep_lag, cop_family, dat_rho, marg_family, mar_param, FALSE, TRUE)) +
+      sum(dgamma(dat, x, be, log = TRUE))
+  }
+
+  uniSlice(x0 = alp, g = logpalp, w = step_size, m = Inf,
+           lower = 0, upper = upper_alp, dat, dep_lag, cop_family, marg_family)
+}
+
+updateCopGammaMTDbe <- function(be, dat, dep_lag, u_be, v_be, dat_rho, alp, trun_size, step_size,
+                                cop_family, marg_family, upper_be) {
+  logpbe <- function(x, dat, dep_lag, cop_family, marg_family) {
+    mar_param <- cbind(rep(alp, trun_size), rep(x, trun_size),
+                       rep(alp, trun_size), rep(x, trun_size))
+
+    dgamma(x, u_be, v_be, log = TRUE) +
+      sum(dBiCopMar_cpp2(dat, dep_lag, cop_family, dat_rho, marg_family, mar_param, FALSE, TRUE)) +
+      sum(dgamma(dat, alp, x, log = TRUE))
+  }
+
+  uniSlice(x0 = be, g = logpbe, w = step_size, m = Inf,
+           lower = 0, upper = upper_be, dat, dep_lag, cop_family, marg_family)
+}
+
+updateCopGammaMTDrho <- function(rho, dat, dep_lag, data_label, mtdorder, step_size, alp, be,
+                                 cop_family, marg_family) {
+  for (l in 1:mtdorder) {
+    dd_l <- dat[which(data_label == l)]
+    lags_l <- dep_lag[which(data_label == l)]
+
+    logprho <- function(x, dd, lags, cop_family, marg_family) {
+      trun_size <- length(dd)
+      mar_param <- cbind(rep(alp, trun_size), rep(be, trun_size),
+                         rep(alp, trun_size), rep(be, trun_size))
+      x_vec <- rep(x, trun_size)
+      sum(dBiCopMar_cpp2(dd, lags, cop_family, x_vec, marg_family, mar_param, FALSE, TRUE))
+    }
+
+    rho[l] <- uniSlice(x0 = rho[l], g = logprho, w = step_size, m = Inf,
+                       lower = -1, upper = 1, dd_l, lags_l, cop_family, marg_family)
+  }
+  rho
+}
+
+##############################################################################
+### updates for the Copula ZI Gamma MTD
+##############################################################################
+
+dsgamma <- function(x, mu, beta, eps, logd = FALSE) {
+  density <- ifelse(x >= eps,
+                    dgamma(x - eps, shape = mu / beta, scale = beta),
+                    0)
+  if (logd) log(density) else density
+}
+
+dzig <- function(x, mu, beta, eps, pi, logd = FALSE) {
+  density <- pi * dunif(x, 0, eps) + (1 - pi) * dsgamma(x, mu, beta, eps)
+  if (logd) log(density) else density
+}
+
+updateZICopGammaMTDalp <- function(alp, dat, dep_lag, u_alp, v_alp, dat_rho, be, eps, Pi, trun_size, step_size,
+                                   cop_family, marg_family, upper_alp) {
+  logpalp <- function(x, dat, dep_lag, cop_family, marg_family) {
+    mar_param <- cbind(rep(x, trun_size), rep(be, trun_size),
+                       rep(x, trun_size), rep(be, trun_size),
+                       rep(eps, trun_size), rep(Pi, trun_size),
+                       rep(eps, trun_size), rep(Pi, trun_size))
+
+    dgamma(x, u_alp, scale = v_alp, log = TRUE) +
+      sum(dBiCopMar_cpp2(dat, dep_lag, cop_family, dat_rho, marg_family, mar_param, FALSE, TRUE)) +
+      sum(dzig(dat, x, be, eps, Pi, logd = TRUE))
+  }
+
+  uniSlice(x0 = alp, g = logpalp, w = step_size, m = Inf,
+           lower = sqrt(.Machine$double.eps), upper = upper_alp,
+           dat, dep_lag, cop_family, marg_family)
+}
+
+updateZICopGammaMTDbe <- function(be, dat, dep_lag, u_be, v_be, dat_rho, alp, eps, Pi, trun_size, step_size,
+                                  cop_family, marg_family, upper_be) {
+  logpbe <- function(x, dat, dep_lag, cop_family, marg_family) {
+    mar_param <- cbind(rep(alp, trun_size), rep(x, trun_size),
+                       rep(alp, trun_size), rep(x, trun_size),
+                       rep(eps, trun_size), rep(Pi, trun_size),
+                       rep(eps, trun_size), rep(Pi, trun_size))
+
+    dgamma(x, u_be, scale = v_be, log = TRUE) +
+      sum(dBiCopMar_cpp2(dat, dep_lag, cop_family, dat_rho, marg_family, mar_param, FALSE, TRUE)) +
+      sum(dzig(dat, alp, x, eps, Pi, logd = TRUE))
+  }
+
+  uniSlice(x0 = be, g = logpbe, w = step_size, m = Inf,
+           lower = sqrt(.Machine$double.eps), upper = upper_be,
+           dat, dep_lag, cop_family, marg_family)
+}
+
+updateZICopGammaMTDPi <- function(Pi, dat, dep_lag, dat_rho, alp, be, eps, trun_size, step_size,
+                                  cop_family, marg_family) {
+  logpPi <- function(x, dat, dep_lag, cop_family, marg_family) {
+    mar_param <- cbind(rep(alp, trun_size), rep(be, trun_size),
+                       rep(alp, trun_size), rep(be, trun_size),
+                       rep(eps, trun_size), rep(x, trun_size),
+                       rep(eps, trun_size), rep(x, trun_size))
+
+    dunif(x, 0, 1, log = TRUE) +
+      sum(dBiCopMar_cpp2(dat, dep_lag, cop_family, dat_rho, marg_family, mar_param, FALSE, TRUE)) +
+      sum(dzig(dat, alp, be, eps, x, logd = TRUE))
+  }
+
+  uniSlice(x0 = Pi, g = logpPi, w = step_size, m = Inf,
+           lower = sqrt(.Machine$double.eps), upper = 1 - sqrt(.Machine$double.eps),
+           dat, dep_lag, cop_family, marg_family)
+}
+
+updateCopZIGammaMTDrho <- function(rho, dat, dep_lag, data_label, mtdorder, step_size, alp, be, eps, Pi,
+                                   cop_family, marg_family) {
+  for (l in 1:mtdorder) {
+    dd_l <- dat[which(data_label == l)]
+    lags_l <- dep_lag[which(data_label == l)]
+
+    logprho <- function(x, dd, lags, cop_family, marg_family) {
+      trun_size <- length(dd)
+      mar_param <- cbind(rep(alp, trun_size), rep(be, trun_size),
+                         rep(alp, trun_size), rep(be, trun_size),
+                         rep(eps, trun_size), rep(Pi, trun_size),
+                         rep(eps, trun_size), rep(Pi, trun_size))
+      x_vec <- rep(x, trun_size)
+      prior <- dnorm(atanh(x), 0, 0.2, log = TRUE) - log(1 - x^2)
+      prior + sum(dBiCopMar_cpp2(dd, lags, cop_family, x_vec, marg_family, mar_param, FALSE, TRUE))
+    }
+
+    rho[l] <- uniSlice(x0 = rho[l], g = logprho, w = step_size, m = Inf,
+                       lower = -1 + sqrt(.Machine$double.eps),
+                       upper = 1 - sqrt(.Machine$double.eps),
+                       dd_l, lags_l, cop_family, marg_family)
+  }
+  rho
+}
+
+##############################################################################
 ### updates for the Poisson MTD
 ##############################################################################
+
 updatePMTDth <- function(dat, dep_lag, ut, u_th, v_th) {
   rbeta(1, u_th + sum(dat-ut), v_th + sum(dep_lag - dat + ut))
 }
