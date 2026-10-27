@@ -86,7 +86,9 @@ zigamma_copula_setup <- function() {
   true_weight <- true_weight / sum(true_weight)
   param <- list(rho = c(0.7, 0.5, 0.3, 0.1, 0.1),
                 mu = 7, beta = 1, epsilon = 0.3, Pi = 0.25)
-  obs <- rMTD(J, true_weight, "zigamma", param, size = 80, trun = FALSE)$y
+  obs <- suppressWarnings(
+    rMTD(J, true_weight, "zigamma", param, size = 80, trun = FALSE)$y
+  )
 
   list(
     obs = obs,
