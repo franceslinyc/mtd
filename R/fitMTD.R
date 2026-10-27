@@ -5,7 +5,8 @@
 #' @param obs a vector of complete data (not truncated).
 #' @param mtdorder the model order. Note mtdorder > 1.
 #' @param family a quoted keyword that specifies the stationary marginal distribution.
-#'        Supported keywords are: "gaussian", "poisson", "negative binomial".
+#'        Supported keywords are: "gaussian", "poisson", "negative binomial",
+#'        "gamma", and "zigamma" (the latter two use a copula model).
 #' @param weight a quoted keyword that specifies the prior for the weights.
 #'        Supported keywords are: "dir", "sb", "cdp". 
 #' @param prior a list of priors for model parameters.
@@ -14,7 +15,10 @@
 #' @param mcmc_param a list of MCMC parameters that contains, 
 #'        niter: the number of iterations;
 #'        nburn: the number of burn-in samples;
-#'        nthin: the number of steps to obtain thinned samples.
+#'        nthin: the number of steps to obtain thinned samples;
+#'        nreport: optional interval for reporting MCMC progress.
+#' @param cop_family copula family code; currently 1 (Gaussian copula) is supported
+#'        for gamma and zigamma marginal models.
 #'
 #' @references 
 #' Zheng, X., Kottas, A., and Sansó, B. (2021),
@@ -23,7 +27,8 @@
 #' 
 #' @export
 #'
-tsMTD <- function(obs, mtdorder, family, weight, prior, tuning, starting, mcmc_param) {
+tsMTD <- function(obs, mtdorder, family, weight, prior, tuning, starting, mcmc_param,
+                  cop_family = NULL) {
   
   ####################################################
   ### observation
@@ -51,7 +56,7 @@ tsMTD <- function(obs, mtdorder, family, weight, prior, tuning, starting, mcmc_p
   }
   
   family <- tolower(family)
-  family_names <- c("gaussian", "poisson", "negative binomial")
+  family_names <- c("gaussian", "poisson", "negative binomial", "gamma", "zigamma")
   
   if (!family %in% family_names) {
     stop("error: specified family '", family, "' is not a valid option;
@@ -134,6 +139,7 @@ tsMTD <- function(obs, mtdorder, family, weight, prior, tuning, starting, mcmc_p
   niter <- mcmc_param$niter
   nburn <- mcmc_param$nburn
   nthin <- mcmc_param$nthin
+  nreport <- mcmc_param$nreport
   
   if (family == "gaussian") {
     
@@ -161,6 +167,88 @@ tsMTD <- function(obs, mtdorder, family, weight, prior, tuning, starting, mcmc_p
     gibbsGMTD(obs, mtdorder, weight_param, prior, tuning, starting, g, niter, nburn, nthin)
     
   } 
+  else if (family == "gamma") {
+    if (is.null(cop_family)) stop("error: cop_family must be specified for the gamma family.")
+    if (length(cop_family) != 1 || cop_family != 1) {
+      stop("error: only cop_family = 1 (Gaussian copula) is supported for the gamma family.")
+    }
+
+    if (is.null(prior$u_alp)) stop("error: hyperparameter u_alp must be specified.")
+    if (is.null(prior$v_alp)) stop("error: hyperparameter v_alp must be specified.")
+    if (is.null(prior$u_be)) stop("error: hyperparameter u_be must be specified.")
+    if (is.null(prior$v_be)) stop("error: hyperparameter v_be must be specified.")
+    if (any(c(prior$u_alp, prior$v_alp, prior$u_be, prior$v_be) <= 0)) {
+      stop("error: gamma prior parameters must be positive.")
+    }
+
+    if (is.null(tuning$step_size) || tuning$step_size <= 0) {
+      stop("error: tuning parameter step_size must be positive.")
+    }
+    if (is.null(tuning$upper_alp) || tuning$upper_alp <= 0) {
+      stop("error: tuning parameter upper_alp must be positive.")
+    }
+    if (is.null(tuning$upper_be) || tuning$upper_be <= 0) {
+      stop("error: tuning parameter upper_be must be positive.")
+    }
+
+    if (is.null(starting$rho) || length(starting$rho) != mtdorder ||
+        any(starting$rho <= -1 | starting$rho >= 1)) {
+      stop("error: starting$rho must have length mtdorder with values between -1 and 1.")
+    }
+    if (is.null(starting$alp) || starting$alp <= 0) {
+      stop("error: starting value of alp must be positive.")
+    }
+    if (is.null(starting$be) || starting$be <= 0) {
+      stop("error: starting value of be must be positive.")
+    }
+
+    gibbsCopGammaMTD(obs, mtdorder, weight_param, prior, tuning, starting, g,
+                    niter, nburn, nthin, nreport, cop_family, 2, TRUE)
+  }
+  else if (family == "zigamma") {
+    if (is.null(cop_family)) stop("error: cop_family must be specified for the zigamma family.")
+    if (length(cop_family) != 1 || cop_family != 1) {
+      stop("error: only cop_family = 1 (Gaussian copula) is supported for the zigamma family.")
+    }
+
+    if (is.null(prior$u_alp)) stop("error: hyperparameter u_alp must be specified.")
+    if (is.null(prior$v_alp)) stop("error: hyperparameter v_alp must be specified.")
+    if (is.null(prior$u_be)) stop("error: hyperparameter u_be must be specified.")
+    if (is.null(prior$v_be)) stop("error: hyperparameter v_be must be specified.")
+    if (any(c(prior$u_alp, prior$v_alp, prior$u_be, prior$v_be) <= 0)) {
+      stop("error: zigamma prior parameters must be positive.")
+    }
+
+    if (is.null(tuning$step_size) || tuning$step_size <= 0) {
+      stop("error: tuning parameter step_size must be positive.")
+    }
+    if (is.null(tuning$upper_alp) || tuning$upper_alp <= 0) {
+      stop("error: tuning parameter upper_alp must be positive.")
+    }
+    if (is.null(tuning$upper_be) || tuning$upper_be <= 0) {
+      stop("error: tuning parameter upper_be must be positive.")
+    }
+
+    if (is.null(starting$rho) || length(starting$rho) != mtdorder ||
+        any(starting$rho <= -1 | starting$rho >= 1)) {
+      stop("error: starting$rho must have length mtdorder with values between -1 and 1.")
+    }
+    if (is.null(starting$alp) || starting$alp <= 0) {
+      stop("error: starting value of alp must be positive.")
+    }
+    if (is.null(starting$be) || starting$be <= 0) {
+      stop("error: starting value of be must be positive.")
+    }
+    if (is.null(starting$eps) || starting$eps <= 0) {
+      stop("error: starting value of eps must be positive.")
+    }
+    if (is.null(starting$Pi) || starting$Pi <= 0 || starting$Pi >= 1) {
+      stop("error: starting value of Pi must be between 0 and 1.")
+    }
+
+    gibbsCopZIGammaMTD(obs, mtdorder, weight_param, prior, tuning, starting, g,
+                      niter, nburn, nthin, nreport, cop_family, 4, TRUE)
+  }
   else if (family == "poisson") {
     
     ### check prior
