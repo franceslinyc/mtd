@@ -28,7 +28,7 @@ predMTD <- function(res, family, lags, probs){
   }
   
   family <- tolower(family)
-  family_names <- c("poisson", "negative binomial")
+  family_names <- c("poisson", "negative binomial", "gamma", "zigamma")
   
   if (!family %in% family_names) {
     
@@ -92,7 +92,92 @@ predMTD <- function(res, family, lags, probs){
     out <- predNBMTD(mtdorder, weight, lags, th, psi, kap, probs) 
     
   }
+  else if (family == "gamma") {
+    weight <- res$weight
+    rho <- res$rho
+    alp <- res$shape1
+    be <- res$shape2
+
+    if (nrow(weight) != ncol(lags) || nrow(rho) != ncol(lags)) {
+      stop("error: the model order used to fit the MTD is different from the number of lags of each observation.")
+    }
+
+    if (is.null(rho) || is.null(alp) || is.null(be) || is.null(weight)) {
+      stop("error: lack of posterior samples.")
+    }
+
+    mtdorder <- nrow(weight)
+    cop_family <- 1
+    marg_family <- 2
+    out <- predCopGammaMTD(mtdorder, weight, lags, alp, be, cop_family, rho, marg_family, probs)
+  }
+  else if (family == "zigamma") {
+    weight <- res$weight
+    rho <- res$rho
+    alp <- res$shape1
+    be <- res$shape2
+    Pi <- res$Pi
+    eps <- res$eps
+
+    if (nrow(weight) != ncol(lags) || nrow(rho) != ncol(lags)) {
+      stop("error: the model order used to fit the MTD is different from the number of lags of each observation.")
+    }
+
+    if (is.null(rho) || is.null(alp) || is.null(be) || is.null(weight) || is.null(Pi) || is.null(eps)) {
+      stop("error: lack of posterior samples.")
+    }
+
+    mtdorder <- nrow(weight)
+    cop_family <- 1
+    marg_family <- 4
+    out <- predCopZIGammaMTD(mtdorder, weight, lags, alp, be, Pi, eps, cop_family, rho, marg_family, probs)
+  }
   
   out
   
+}
+
+predMTD_2 <- function(res, family, lags, probs){
+  if (family == "gamma") {
+    weight <- res$weight
+    rho <- res$rho
+    alp <- res$shape1
+    be <- res$shape2
+
+    if (nrow(weight) != ncol(lags) || nrow(rho) != ncol(lags)) {
+      stop("error: the model order used to fit the MTD is different from the number of lags of each observation.")
+    }
+
+    if (is.null(rho) || is.null(alp) || is.null(be) || is.null(weight)) {
+      stop("error: lack of posterior samples.")
+    }
+
+    mtdorder <- nrow(weight)
+    cop_family <- 1
+    marg_family <- 2
+    out <- predCopGammaMTD_2(mtdorder, weight, lags, alp, be, cop_family, rho, marg_family, probs)
+  }
+  else if (family == "zigamma") {
+    weight <- res$weight
+    rho <- res$rho
+    alp <- res$shape1
+    be <- res$shape2
+    Pi <- res$Pi
+    eps <- res$eps
+
+    if (nrow(weight) != ncol(lags) || nrow(rho) != ncol(lags)) {
+      stop("error: the model order used to fit the MTD is different from the number of lags of each observation.")
+    }
+
+    if (is.null(rho) || is.null(alp) || is.null(be) || is.null(weight) || is.null(Pi) || is.null(eps)) {
+      stop("error: lack of posterior samples.")
+    }
+
+    mtdorder <- nrow(weight)
+    cop_family <- 1
+    marg_family <- 4
+    out <- predCopZIGammaMTD_2(mtdorder, weight, lags, alp, be, Pi, eps, cop_family, rho, marg_family, probs)
+  }
+
+  out
 }
