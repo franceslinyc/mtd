@@ -8,12 +8,13 @@ Description: Fit univariate non-Gaussian time series using mixture transition
              distribution (MTD) models. The bivariate normal CDF implementation
              is adapted from pbv by Alexander Robitzsch.
 License: GPL (>= 2)
-Imports: 
-    Rcpp,
+Imports:
+    Rcpp (>= 1.0.9),
     extraDistr,
-    RcppDist
-LinkingTo: 
-    Rcpp, 
+    RcppDist,
+    mvtnorm
+LinkingTo:
+    Rcpp,
     RcppArmadillo,
     RcppDist,
     BH,
