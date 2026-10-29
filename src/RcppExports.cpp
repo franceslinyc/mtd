@@ -101,6 +101,131 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// pbv_rcpp_pnorm0
+double pbv_rcpp_pnorm0(double z);
+RcppExport SEXP _mtd_pbv_rcpp_pnorm0(SEXP zSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type z(zSEXP);
+    rcpp_result_gen = Rcpp::wrap(pbv_rcpp_pnorm0(z));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pbv_rcpp_pbvnorm0
+double pbv_rcpp_pbvnorm0(double h1, double hk, double r);
+RcppExport SEXP _mtd_pbv_rcpp_pbvnorm0(SEXP h1SEXP, SEXP hkSEXP, SEXP rSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type h1(h1SEXP);
+    Rcpp::traits::input_parameter< double >::type hk(hkSEXP);
+    Rcpp::traits::input_parameter< double >::type r(rSEXP);
+    rcpp_result_gen = Rcpp::wrap(pbv_rcpp_pbvnorm0(h1, hk, r));
+    return rcpp_result_gen;
+END_RCPP
+}
+// psgamma_v2
+double psgamma_v2(double x, double mu, double beta, double eps);
+RcppExport SEXP _mtd_psgamma_v2(SEXP xSEXP, SEXP muSEXP, SEXP betaSEXP, SEXP epsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type x(xSEXP);
+    Rcpp::traits::input_parameter< double >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< double >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
+    rcpp_result_gen = Rcpp::wrap(psgamma_v2(x, mu, beta, eps));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pzig_v2
+double pzig_v2(double x, double mu, double beta, double eps, double pi);
+RcppExport SEXP _mtd_pzig_v2(SEXP xSEXP, SEXP muSEXP, SEXP betaSEXP, SEXP epsSEXP, SEXP piSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type x(xSEXP);
+    Rcpp::traits::input_parameter< double >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< double >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
+    Rcpp::traits::input_parameter< double >::type pi(piSEXP);
+    rcpp_result_gen = Rcpp::wrap(pzig_v2(x, mu, beta, eps, pi));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pBiCopMar_cpp
+double pBiCopMar_cpp(const double& xx, const double& yy, const int& cop_family, const double& cop_param, const int& marg_family, const arma::colvec& mar_param, const bool& ce, const bool& logd);
+RcppExport SEXP _mtd_pBiCopMar_cpp(SEXP xxSEXP, SEXP yySEXP, SEXP cop_familySEXP, SEXP cop_paramSEXP, SEXP marg_familySEXP, SEXP mar_paramSEXP, SEXP ceSEXP, SEXP logdSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const double& >::type xx(xxSEXP);
+    Rcpp::traits::input_parameter< const double& >::type yy(yySEXP);
+    Rcpp::traits::input_parameter< const int& >::type cop_family(cop_familySEXP);
+    Rcpp::traits::input_parameter< const double& >::type cop_param(cop_paramSEXP);
+    Rcpp::traits::input_parameter< const int& >::type marg_family(marg_familySEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type mar_param(mar_paramSEXP);
+    Rcpp::traits::input_parameter< const bool& >::type ce(ceSEXP);
+    Rcpp::traits::input_parameter< const bool& >::type logd(logdSEXP);
+    rcpp_result_gen = Rcpp::wrap(pBiCopMar_cpp(xx, yy, cop_family, cop_param, marg_family, mar_param, ce, logd));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pBiCopMar_cpp2
+arma::colvec pBiCopMar_cpp2(const arma::colvec& xx, const arma::colvec& yy, const int& cop_family, const arma::colvec cop_param, const int& marg_family, const arma::mat& mar_param, const bool& ce, const bool& logd);
+RcppExport SEXP _mtd_pBiCopMar_cpp2(SEXP xxSEXP, SEXP yySEXP, SEXP cop_familySEXP, SEXP cop_paramSEXP, SEXP marg_familySEXP, SEXP mar_paramSEXP, SEXP ceSEXP, SEXP logdSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::colvec& >::type xx(xxSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type yy(yySEXP);
+    Rcpp::traits::input_parameter< const int& >::type cop_family(cop_familySEXP);
+    Rcpp::traits::input_parameter< const arma::colvec >::type cop_param(cop_paramSEXP);
+    Rcpp::traits::input_parameter< const int& >::type marg_family(marg_familySEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type mar_param(mar_paramSEXP);
+    Rcpp::traits::input_parameter< const bool& >::type ce(ceSEXP);
+    Rcpp::traits::input_parameter< const bool& >::type logd(logdSEXP);
+    rcpp_result_gen = Rcpp::wrap(pBiCopMar_cpp2(xx, yy, cop_family, cop_param, marg_family, mar_param, ce, logd));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pCopGammaMTD
+double pCopGammaMTD(const double& obs, const arma::colvec& lags, const arma::colvec& weight, const double& alp, const double& be, const int& cop_family, const arma::colvec& rho, const int& marg_family, const arma::colvec& mar_param);
+RcppExport SEXP _mtd_pCopGammaMTD(SEXP obsSEXP, SEXP lagsSEXP, SEXP weightSEXP, SEXP alpSEXP, SEXP beSEXP, SEXP cop_familySEXP, SEXP rhoSEXP, SEXP marg_familySEXP, SEXP mar_paramSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const double& >::type obs(obsSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type lags(lagsSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type weight(weightSEXP);
+    Rcpp::traits::input_parameter< const double& >::type alp(alpSEXP);
+    Rcpp::traits::input_parameter< const double& >::type be(beSEXP);
+    Rcpp::traits::input_parameter< const int& >::type cop_family(cop_familySEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type rho(rhoSEXP);
+    Rcpp::traits::input_parameter< const int& >::type marg_family(marg_familySEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type mar_param(mar_paramSEXP);
+    rcpp_result_gen = Rcpp::wrap(pCopGammaMTD(obs, lags, weight, alp, be, cop_family, rho, marg_family, mar_param));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rqrCopGammaMTD
+arma::mat rqrCopGammaMTD(const arma::colvec& obs, const arma::mat& weight, const arma::colvec& alp, const arma::colvec& be, const int& cop_family, const arma::mat& rho, const int& marg_family);
+RcppExport SEXP _mtd_rqrCopGammaMTD(SEXP obsSEXP, SEXP weightSEXP, SEXP alpSEXP, SEXP beSEXP, SEXP cop_familySEXP, SEXP rhoSEXP, SEXP marg_familySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::colvec& >::type obs(obsSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type weight(weightSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type alp(alpSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type be(beSEXP);
+    Rcpp::traits::input_parameter< const int& >::type cop_family(cop_familySEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type rho(rhoSEXP);
+    Rcpp::traits::input_parameter< const int& >::type marg_family(marg_familySEXP);
+    rcpp_result_gen = Rcpp::wrap(rqrCopGammaMTD(obs, weight, alp, be, cop_family, rho, marg_family));
+    return rcpp_result_gen;
+END_RCPP
+}
 // psgamma
 double psgamma(double x, double mu, double beta, double eps);
 RcppExport SEXP _mtd_psgamma(SEXP xSEXP, SEXP muSEXP, SEXP betaSEXP, SEXP epsSEXP) {
@@ -460,6 +585,14 @@ static const R_CallMethodDef CallEntries[] = {
     {"_mtd_rqrPMTD", (DL_FUNC) &_mtd_rqrPMTD, 4},
     {"_mtd_pLMTD", (DL_FUNC) &_mtd_pLMTD, 5},
     {"_mtd_rqrRegLMTD", (DL_FUNC) &_mtd_rqrRegLMTD, 6},
+    {"_mtd_pbv_rcpp_pnorm0", (DL_FUNC) &_mtd_pbv_rcpp_pnorm0, 1},
+    {"_mtd_pbv_rcpp_pbvnorm0", (DL_FUNC) &_mtd_pbv_rcpp_pbvnorm0, 3},
+    {"_mtd_psgamma_v2", (DL_FUNC) &_mtd_psgamma_v2, 4},
+    {"_mtd_pzig_v2", (DL_FUNC) &_mtd_pzig_v2, 5},
+    {"_mtd_pBiCopMar_cpp", (DL_FUNC) &_mtd_pBiCopMar_cpp, 8},
+    {"_mtd_pBiCopMar_cpp2", (DL_FUNC) &_mtd_pBiCopMar_cpp2, 8},
+    {"_mtd_pCopGammaMTD", (DL_FUNC) &_mtd_pCopGammaMTD, 9},
+    {"_mtd_rqrCopGammaMTD", (DL_FUNC) &_mtd_rqrCopGammaMTD, 7},
     {"_mtd_psgamma", (DL_FUNC) &_mtd_psgamma, 4},
     {"_mtd_pzig", (DL_FUNC) &_mtd_pzig, 5},
     {"_mtd_qsgamma", (DL_FUNC) &_mtd_qsgamma, 4},
