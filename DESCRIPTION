@@ -10,10 +10,14 @@ Description: Fit univariate non-Gaussian time series using mixture transition
 License: GPL (>= 2)
 Imports: 
     Rcpp,
-    extraDistr
+    extraDistr,
+    RcppDist
 LinkingTo: 
     Rcpp, 
-    RcppArmadillo
+    RcppArmadillo,
+    RcppDist,
+    BH,
+    RcppTN
 Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

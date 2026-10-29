@@ -1,11 +1,14 @@
 #include <iostream>
 #include <RcppArmadillo.h>
+#include <RcppDist.h>
+#include <RcppTN.h>
 #include <math.h>
+#include "utils.h"
 
 using namespace std;
 using namespace Rcpp;
 
-// [[Rcpp::depends(RcppArmadillo)]]
+// [[Rcpp::depends(RcppArmadillo, RcppDist, RcppTN)]]
 
 // [[Rcpp::export]]
 double dCondBiPois(const int& uu,
