@@ -90,6 +90,12 @@ test_that("qzig inverts pzig across both mixture components", {
   expect_equal(result, x, tolerance = 1e-8)
 })
 
+test_that("ZI Gamma CDF and quantile APIs consistently take epsilon before Pi", {
+  expect_identical(names(formals(pzig)), c("y", "mu", "beta", "epsilon", "Pi"))
+  expect_identical(names(formals(qzig)), c("u", "mu", "beta", "epsilon", "Pi"))
+  expect_identical(names(formals(pzig_v2)), c("x", "mu", "beta", "eps", "pi"))
+})
+
 test_that("rsgamma produces shifted positive Gamma draws reproducibly", {
   set.seed(24)
   x <- rsgamma(100, mu = 4, beta = 2, epsilon = 0.5)

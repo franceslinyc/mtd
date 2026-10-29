@@ -99,7 +99,7 @@ double qsgamma(double x, double mu, double beta, double eps) {
 }
 
 // [[Rcpp::export]]
-double qzig(double u, double mu, double beta, double pi, double eps) {
+double qzig(double u, double mu, double beta, double eps, double pi) {
   if (u <= pi) {
     return R::qunif(u / pi, 0.0, eps, true, false);
   } else {
@@ -885,7 +885,7 @@ arma::mat predCopZIGammaMTD(const int& mtdorder,
 
       iter_vv = pzig(dep_lag, iter_alp, iter_be, iter_eps, iter_Pi);
       iter_uu = rConCop(iter_vv, cop_family, iter_cop_param);
-      ipred(iter) = qzig(iter_uu, iter_alp, iter_be, iter_Pi, iter_eps);
+      ipred(iter) = qzig(iter_uu, iter_alp, iter_be, iter_eps, iter_Pi);
     
     }
 
@@ -940,7 +940,7 @@ arma::mat predCopZIGammaMTD_2(const int& mtdorder,
 
       iter_vv = pzig(dep_lag, iter_alp, iter_be, iter_eps, iter_Pi);
       iter_uu = rConCop(iter_vv, cop_family, iter_cop_param);
-      ipred(iter) = qzig(iter_uu, iter_alp, iter_be, iter_Pi, iter_eps);
+      ipred(iter) = qzig(iter_uu, iter_alp, iter_be, iter_eps, iter_Pi);
 
     }
 
