@@ -241,7 +241,8 @@ double pBiCop_cpp(const double& uu, const double& vv, const int& cop_family,
   if (cop_family == 1) {
     double xx = R::qnorm(uu, 0.0, 1.0, true, false);
     double yy = R::qnorm(vv, 0.0, 1.0, true, false);
-    logdens = pbv_rcpp_pbvnorm0(xx, yy, cop_param);
+    double rho = cop_param;
+    logdens = pbv_rcpp_pbvnorm0(xx, yy, rho);
   } else if (cop_family == 2) {
     double eta = cop_param;
     if (eta < 1) stop("error: gumbel copula parameter must be greater than 1.");
