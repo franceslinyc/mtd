@@ -270,17 +270,17 @@ BEGIN_RCPP
 END_RCPP
 }
 // qzig
-double qzig(double u, double mu, double beta, double pi, double eps);
-RcppExport SEXP _mtd_qzig(SEXP uSEXP, SEXP muSEXP, SEXP betaSEXP, SEXP piSEXP, SEXP epsSEXP) {
+double qzig(double u, double mu, double beta, double eps, double pi);
+RcppExport SEXP _mtd_qzig(SEXP uSEXP, SEXP muSEXP, SEXP betaSEXP, SEXP epsSEXP, SEXP piSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< double >::type u(uSEXP);
     Rcpp::traits::input_parameter< double >::type mu(muSEXP);
     Rcpp::traits::input_parameter< double >::type beta(betaSEXP);
-    Rcpp::traits::input_parameter< double >::type pi(piSEXP);
     Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
-    rcpp_result_gen = Rcpp::wrap(qzig(u, mu, beta, pi, eps));
+    Rcpp::traits::input_parameter< double >::type pi(piSEXP);
+    rcpp_result_gen = Rcpp::wrap(qzig(u, mu, beta, eps, pi));
     return rcpp_result_gen;
 END_RCPP
 }

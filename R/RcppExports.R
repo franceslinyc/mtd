@@ -69,8 +69,8 @@ qsgamma <- function(x, mu, beta, eps) {
     .Call(`_mtd_qsgamma`, x, mu, beta, eps)
 }
 
-qzig <- function(u, mu, beta, pi, eps) {
-    .Call(`_mtd_qzig`, u, mu, beta, pi, eps)
+qzig <- function(u, mu, beta, eps, pi) {
+    .Call(`_mtd_qzig`, u, mu, beta, eps, pi)
 }
 
 dBiCopMar_cpp <- function(xx, yy, cop_family, cop_param, marg_family, mar_param, ce = FALSE, logd = FALSE) {
