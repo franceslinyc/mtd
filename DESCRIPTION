@@ -5,14 +5,20 @@ Date: 2021-09-02
 Author: Xiaotian Zheng <xzheng24@ucsc.edu>
 Maintainer: Xiaotian Zheng <xzheng24@ucsc.edu>
 Description: Fit univariate non-Gaussian time series using mixture transition
-             distribution (MTD) models.
+             distribution (MTD) models. The bivariate normal CDF implementation
+             is adapted from pbv by Alexander Robitzsch.
 License: GPL (>= 2)
-Imports: 
+Imports:
+    Rcpp (>= 1.0.9),
+    extraDistr,
+    RcppDist,
+    mvtnorm
+LinkingTo:
     Rcpp,
-    extraDistr
-LinkingTo: 
-    Rcpp, 
-    RcppArmadillo
+    RcppArmadillo,
+    RcppDist,
+    BH,
+    RcppTN
 Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

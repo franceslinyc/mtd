@@ -25,6 +25,38 @@ rqrRegLMTD <- function(obs, xx, weight, bb, alpha, phi) {
     .Call(`_mtd_rqrRegLMTD`, obs, xx, weight, bb, alpha, phi)
 }
 
+pbv_rcpp_pnorm0 <- function(z) {
+    .Call(`_mtd_pbv_rcpp_pnorm0`, z)
+}
+
+pbv_rcpp_pbvnorm0 <- function(h1, hk, r) {
+    .Call(`_mtd_pbv_rcpp_pbvnorm0`, h1, hk, r)
+}
+
+psgamma_v2 <- function(x, mu, beta, eps) {
+    .Call(`_mtd_psgamma_v2`, x, mu, beta, eps)
+}
+
+pzig_v2 <- function(x, mu, beta, eps, pi) {
+    .Call(`_mtd_pzig_v2`, x, mu, beta, eps, pi)
+}
+
+pBiCopMar_cpp <- function(xx, yy, cop_family, cop_param, marg_family, mar_param, ce = FALSE, logd = FALSE) {
+    .Call(`_mtd_pBiCopMar_cpp`, xx, yy, cop_family, cop_param, marg_family, mar_param, ce, logd)
+}
+
+pBiCopMar_cpp2 <- function(xx, yy, cop_family, cop_param, marg_family, mar_param, ce = FALSE, logd = FALSE) {
+    .Call(`_mtd_pBiCopMar_cpp2`, xx, yy, cop_family, cop_param, marg_family, mar_param, ce, logd)
+}
+
+pCopGammaMTD <- function(obs, lags, weight, alp, be, cop_family, rho, marg_family, mar_param) {
+    .Call(`_mtd_pCopGammaMTD`, obs, lags, weight, alp, be, cop_family, rho, marg_family, mar_param)
+}
+
+rqrCopGammaMTD <- function(obs, weight, alp, be, cop_family, rho, marg_family) {
+    .Call(`_mtd_rqrCopGammaMTD`, obs, weight, alp, be, cop_family, rho, marg_family)
+}
+
 psgamma <- function(x, mu, beta, eps) {
     .Call(`_mtd_psgamma`, x, mu, beta, eps)
 }
