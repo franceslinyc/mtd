@@ -217,19 +217,25 @@ gibbsCopGMTD <- function(obs, mtdorder, weight_param, prior, tuning, starting, u
 gibbsCopGammaMTD <- function(obs, mtdorder, weight_param, prior, tuning, starting, updateWeight, niter, nburn, nthin, nreport, 
                              cop_family, marg_family, verbose){
 
-  step_size <- tuning$step_size
-  rho <- starting$rho         
-
+  # prior
   u_alp <- prior$u_alp
   v_alp <- prior$v_alp
   u_be <- prior$u_be
   v_be <- prior$v_be
 
+  # tuning parameters
+  step_size <- tuning$step_size
   upper_alp <- tuning$upper_alp
   upper_be <- tuning$upper_be
 
+  # starting values
   alp <- starting$alp
   be <- starting$be
+  rho <- starting$rho        
+
+  #--------------------------
+  # MCMC settings
+  #--------------------------
 
   if (verbose) {
     
@@ -240,6 +246,10 @@ gibbsCopGammaMTD <- function(obs, mtdorder, weight_param, prior, tuning, startin
     cat("--------------------------------------------\n")
     
   }
+
+  #################
+  # initialization
+  #################  
 
   lag_mat <- as.matrix(lagmat(obs, mtdorder))
   dat <- obs[-(1:mtdorder)]
@@ -258,26 +268,35 @@ gibbsCopGammaMTD <- function(obs, mtdorder, weight_param, prior, tuning, startin
   }
   dat_rho <- rho[data_label]
 
+  ## empty stuffs to save samples
   weight_save <- array(NA, dim = c(mtdorder, niter - nburn))
   rho_save <- array(NA, dim = c(mtdorder, niter - nburn))
   alp_save <- array(NA, dim = niter - nburn)
   be_save <- array(NA, dim = niter - nburn)
+
+  #######
+  # mcmc
+  #######
 
   block_runtime <- 0
 
   for (iter in 1:niter){
     
     start_time <- Sys.time()
-    
+  
+    ## update alp
     alp <- updateCopGammaMTDalp(alp, dat, dep_lag, u_alp, v_alp, dat_rho, be, trun_size, step_size, 
                                 cop_family, marg_family, upper_alp)
 
+    ## update be (rate parameter)
     be <- updateCopGammaMTDbe(be, dat, dep_lag, u_be, v_be, dat_rho, alp, trun_size, step_size, 
                               cop_family, marg_family, upper_be)
- 
+
+    ## update rho  
     rho <- updateCopGammaMTDrho(rho, dat, dep_lag, data_label, mtdorder, step_size, alp, be,
                                 cop_family, marg_family)
-    
+
+    ## update labels    
     yy_param1 <- rep(alp, trun_size)
     yy_param2 <- rep(be, trun_size)                           
     yy_ne_param1 <- matrix(rep(yy_param1, mtdorder), ncol = mtdorder) 
@@ -291,9 +310,14 @@ gibbsCopGammaMTD <- function(obs, mtdorder, weight_param, prior, tuning, startin
     n_j <- rep(0, mtdorder)
     n_j[unique_label] <- as.numeric(table(data_label))
     dat_rho <- rho[data_label]
-    
+
+    ## sample weights    
     weight <- updateWeight(n_j, weight_param)
-    
+
+    #--------------------------
+    # Print MCMC progress
+    #--------------------------
+
     end_time <- Sys.time()
     block_runtime <- block_runtime + as.numeric(end_time - start_time)
     
@@ -309,6 +333,7 @@ gibbsCopGammaMTD <- function(obs, mtdorder, weight_param, prior, tuning, startin
       }
     }  
 
+    ## save samples
     if (iter > nburn){
       weight_save[, iter - nburn] <- weight
       rho_save[, iter - nburn] <- rho
@@ -316,6 +341,10 @@ gibbsCopGammaMTD <- function(obs, mtdorder, weight_param, prior, tuning, startin
       be_save[iter - nburn] <- be
     }
   }
+
+  ######################
+  # thinning and output
+  ######################
 
   selc_index <- seq(1, niter - nburn, by = nthin)
   list(weight = weight_save[, selc_index], 
@@ -332,21 +361,27 @@ gibbsCopGammaMTD <- function(obs, mtdorder, weight_param, prior, tuning, startin
 gibbsCopZIGammaMTD <- function(obs, mtdorder, weight_param, prior, tuning, starting, updateWeight, niter, nburn, nthin, nreport, 
                                cop_family, marg_family, verbose){
 
-  step_size <- tuning$step_size
-  rho <- starting$rho         
-
+  # prior
   u_alp <- prior$u_alp
   v_alp <- prior$v_alp
   u_be <- prior$u_be
   v_be <- prior$v_be
 
+  # tuning parameters
+  step_size <- tuning$step_size
   upper_alp <- tuning$upper_alp
   upper_be <- tuning$upper_be
 
+  # starting values
   alp <- starting$alp
   be <- starting$be 
+  rho <- starting$rho       
   eps <- starting$eps
   Pi <- starting$Pi
+
+  #--------------------------
+  # MCMC settings
+  #--------------------------
 
   if (verbose) {
     
@@ -357,6 +392,10 @@ gibbsCopZIGammaMTD <- function(obs, mtdorder, weight_param, prior, tuning, start
     cat("--------------------------------------------\n")
     
   }
+
+  #################
+  # initialization
+  #################  
 
   lag_mat <- as.matrix(lagmat(obs, mtdorder))
   dat <- obs[-(1:mtdorder)]
@@ -375,31 +414,45 @@ gibbsCopZIGammaMTD <- function(obs, mtdorder, weight_param, prior, tuning, start
   }
   dat_rho <- rho[data_label]
 
+  ## empty stuffs to save samples
   weight_save <- array(NA, dim = c(mtdorder, niter - nburn))
   rho_save <- array(NA, dim = c(mtdorder, niter - nburn))
   alp_save <- array(NA, dim = niter - nburn)
   be_save <- array(NA, dim = niter - nburn)
   Pi_save <- array(NA, dim = niter - nburn)
-  eps_save <- array(NA, dim = niter - nburn)
+  #eps_save <- array(NA, dim = niter - nburn)
+
+  #######
+  # mcmc
+  #######
 
   block_runtime <- 0
 
   for (iter in 1:niter){
     
     start_time <- Sys.time()
-    
+
+    ## update mu
     alp <- updateZICopGammaMTDalp(alp, dat, dep_lag, u_alp, v_alp, dat_rho, be, eps, Pi, trun_size, step_size, 
                                   cop_family, marg_family, upper_alp)
 
+    ## update be (scale parameter)
     be <- updateZICopGammaMTDbe(be, dat, dep_lag, u_be, v_be, dat_rho, alp, eps, Pi, trun_size, step_size, 
                                 cop_family, marg_family, upper_be)
 
+    ## update eps
+    # eps <- updateZICopGammaMTDeps(eps, dat, dep_lag, eps_0, dat_rho, alp, be, Pi, trun_size, step_size, 
+    #                               cop_family, marg_family, upper_eps)
+
+    ## update pi 
     Pi <- updateZICopGammaMTDPi(Pi, dat, dep_lag, dat_rho, alp, be, eps, trun_size, step_size, 
                                 cop_family, marg_family)    
-                                
+
+    ## update rho                                
     rho <- updateCopZIGammaMTDrho(rho, dat, dep_lag, data_label, mtdorder, step_size, alp, be, eps, Pi, 
                                   cop_family, marg_family)
     
+    ## update labels    
     yy_param1 <- rep(alp, trun_size)
     yy_param2 <- rep(be, trun_size) 
     yy_param3 <- rep(eps, trun_size)
@@ -418,9 +471,14 @@ gibbsCopZIGammaMTD <- function(obs, mtdorder, weight_param, prior, tuning, start
     n_j <- rep(0, mtdorder)
     n_j[unique_label] <- as.numeric(table(data_label))
     dat_rho <- rho[data_label]
-    
+
+    ## sample weights
     weight <- updateWeight(n_j, weight_param)
-    
+
+    #--------------------------
+    # Print MCMC progress
+    #--------------------------
+
     end_time <- Sys.time()
     block_runtime <- block_runtime + as.numeric(end_time - start_time)
     
@@ -436,23 +494,28 @@ gibbsCopZIGammaMTD <- function(obs, mtdorder, weight_param, prior, tuning, start
       }
     }  
 
+    ## save samples
     if (iter > nburn){
       weight_save[, iter - nburn] <- weight
       rho_save[, iter - nburn] <- rho
       alp_save[iter - nburn] <- alp
       be_save[iter - nburn] <- be
       Pi_save[iter - nburn] <- Pi
-      eps_save[iter - nburn] <- eps
+      #eps_save[iter - nburn] <- eps
     }
   }
+
+  ######################
+  # thinning and output
+  ######################
 
   selc_index <- seq(1, niter - nburn, by = nthin)
   list(weight = weight_save[, selc_index], 
        rho = rho_save[, selc_index],
        shape1 = alp_save[selc_index],
        shape2 = be_save[selc_index],
-       Pi = Pi_save[selc_index],
-       eps = eps_save[selc_index]
+       Pi = Pi_save[selc_index]#,
+       #eps = eps_save[selc_index]
        )
   
 } 

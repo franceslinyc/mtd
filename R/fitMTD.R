@@ -17,8 +17,9 @@
 #'        nburn: the number of burn-in samples;
 #'        nthin: the number of steps to obtain thinned samples;
 #'        nreport: optional interval for reporting MCMC progress.
-#' @param cop_family copula family code; currently 1 (Gaussian copula) is supported
+#' @param cop_family an integer code for the copula family; currently 1 (Gaussian copula) is supported.
 #'        for gamma and zigamma marginal models.
+#' @param marg_family an integer code for the marginal family; currently 2 (gamma) and 4 (zigamma) are supported.
 #'
 #' @references 
 #' Zheng, X., Kottas, A., and Sansó, B. (2021),
@@ -28,7 +29,7 @@
 #' @export
 #'
 tsMTD <- function(obs, mtdorder, family, weight, prior, tuning, starting, mcmc_param,
-                  cop_family = NULL) {
+                  cop_family = NULL, marg_family = NULL) {
   
   ####################################################
   ### observation
@@ -173,6 +174,7 @@ tsMTD <- function(obs, mtdorder, family, weight, prior, tuning, starting, mcmc_p
       stop("error: only cop_family = 1 (Gaussian copula) is supported for the gamma family.")
     }
 
+    ### check prior
     if (is.null(prior$u_alp)) stop("error: hyperparameter u_alp must be specified.")
     if (is.null(prior$v_alp)) stop("error: hyperparameter v_alp must be specified.")
     if (is.null(prior$u_be)) stop("error: hyperparameter u_be must be specified.")
@@ -181,6 +183,7 @@ tsMTD <- function(obs, mtdorder, family, weight, prior, tuning, starting, mcmc_p
       stop("error: gamma prior parameters must be positive.")
     }
 
+    ### check tuning parameter
     if (is.null(tuning$step_size) || tuning$step_size <= 0) {
       stop("error: tuning parameter step_size must be positive.")
     }
@@ -191,6 +194,7 @@ tsMTD <- function(obs, mtdorder, family, weight, prior, tuning, starting, mcmc_p
       stop("error: tuning parameter upper_be must be positive.")
     }
 
+    ### check starting values
     if (is.null(starting$rho) || length(starting$rho) != mtdorder ||
         any(starting$rho <= -1 | starting$rho >= 1)) {
       stop("error: starting$rho must have length mtdorder with values between -1 and 1.")
@@ -203,7 +207,7 @@ tsMTD <- function(obs, mtdorder, family, weight, prior, tuning, starting, mcmc_p
     }
 
     gibbsCopGammaMTD(obs, mtdorder, weight_param, prior, tuning, starting, g,
-                    niter, nburn, nthin, nreport, cop_family, 2, TRUE)
+                    niter, nburn, nthin, nreport, cop_family, marg_family = 2, verbose = TRUE)
   }
   else if (family == "zigamma") {
     if (is.null(cop_family)) stop("error: cop_family must be specified for the zigamma family.")
@@ -211,6 +215,7 @@ tsMTD <- function(obs, mtdorder, family, weight, prior, tuning, starting, mcmc_p
       stop("error: only cop_family = 1 (Gaussian copula) is supported for the zigamma family.")
     }
 
+    ### check prior
     if (is.null(prior$u_alp)) stop("error: hyperparameter u_alp must be specified.")
     if (is.null(prior$v_alp)) stop("error: hyperparameter v_alp must be specified.")
     if (is.null(prior$u_be)) stop("error: hyperparameter u_be must be specified.")
@@ -219,6 +224,7 @@ tsMTD <- function(obs, mtdorder, family, weight, prior, tuning, starting, mcmc_p
       stop("error: zigamma prior parameters must be positive.")
     }
 
+    ### check tuning parameter
     if (is.null(tuning$step_size) || tuning$step_size <= 0) {
       stop("error: tuning parameter step_size must be positive.")
     }
@@ -229,6 +235,7 @@ tsMTD <- function(obs, mtdorder, family, weight, prior, tuning, starting, mcmc_p
       stop("error: tuning parameter upper_be must be positive.")
     }
 
+    ### check starting values
     if (is.null(starting$rho) || length(starting$rho) != mtdorder ||
         any(starting$rho <= -1 | starting$rho >= 1)) {
       stop("error: starting$rho must have length mtdorder with values between -1 and 1.")
@@ -247,7 +254,7 @@ tsMTD <- function(obs, mtdorder, family, weight, prior, tuning, starting, mcmc_p
     }
 
     gibbsCopZIGammaMTD(obs, mtdorder, weight_param, prior, tuning, starting, g,
-                      niter, nburn, nthin, nreport, cop_family, 4, TRUE)
+                      niter, nburn, nthin, nreport, cop_family, marg_family = 4, verbose = TRUE)
   }
   else if (family == "poisson") {
     

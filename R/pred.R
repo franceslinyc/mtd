@@ -6,7 +6,7 @@
 #' @param res a list of MCMC results from the MTD model; an output from functions 
 #'        either \code{\link{tsMTD}} or \code{\link{tsRegMTD}}.
 #' @param family a quoted keyword that specifies the stationary marginal distribution.
-#'        Supported keywords are: "gaussian", "poisson", "negative binomial".
+#'        Supported keywords are: "poisson", "negative binomial", "gamma", "zigamma".
 #' @param lags a numeric matrix of the lags of the observation. Each row 
 #'        corresponds to an observation. The dimension of the matrix is 
 #'        truncated data size x mtdorder.
