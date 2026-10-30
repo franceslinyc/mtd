@@ -5,7 +5,7 @@
 #' @param mtdorder the model order. Note mtdorder > 1.
 #' @param weight a numeric vector of weights of the MTD model.
 #' @param family a quoted keyword that specifies the stationary marginal distribution.
-#'        Supported keywords are: "gaussian", "poisson, negative binomial and lomax".
+#'        Supported keywords are: "gaussian", "poisson", "negative binomial", "lomax", "gamma", "zigamma".
 #' @param param a list of pre-specified parameter values of the model.
 #' @param trun a logical value. If TRUE, the first mtdorder elements need to be specified.
 #' @param init_data a numeric vector of the initial values of the data to be generated. 
