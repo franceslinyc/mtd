@@ -6,3 +6,7 @@ src/*.o
 src/*.so
 src/*.dll
 *_cache/
+.DS_Store
+..Rcheck/
+README.html
+src/symbols.rds
