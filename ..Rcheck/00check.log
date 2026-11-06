@@ -1,0 +1,189 @@
+* using log directory ‘/Users/franceslin/GitHub/mtd/..Rcheck’
+* using R version 4.5.2 (2025-10-31)
+* using platform: aarch64-apple-darwin20
+* R was compiled by
+    Apple clang version 16.0.0 (clang-1600.0.26.6)
+    GNU Fortran (GCC) 14.2.0
+* running under: macOS Tahoe 26.6.2
+* using session charset: UTF-8
+* using options ‘--no-manual --no-build-vignettes’
+* checking for file ‘./DESCRIPTION’ ... OK
+* this is package ‘mtd’ version ‘0.1.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... OK
+* checking if this is a source package ... WARNING
+Subdirectory ‘mtd/src’ contains apparent object files/libraries
+  RcppExports.o mc.o mtd.so updates-preds.o utils.o
+Object files/libraries should not be included in a source package.
+* checking if there is a namespace ... OK
+* checking for executable files ... OK
+* checking for hidden files and directories ... NOTE
+Found the following hidden files and directories:
+  .DS_Store
+  .github/.gitignore
+  .gitignore
+  src/.gitignore
+  ..Rcheck
+  .git
+  .github
+These were most likely included in error. See section ‘Package
+structure’ in the ‘Writing R Extensions’ manual.
+* checking for portable file names ... OK
+* checking for sufficient/correct file permissions ... OK
+* checking whether package ‘mtd’ can be installed ... WARNING
+Found the following significant warnings:
+  /Library/Frameworks/R.framework/Resources/include/R_ext/Boolean.h:62:36: warning: unknown warning group '-Wfixed-enum-extension', ignored [-Wunknown-warning-option]
+See ‘/Users/franceslin/GitHub/mtd/..Rcheck/00install.out’ for details.
+* used C++ compiler: ‘Apple clang version 21.0.0 (clang-2100.1.1.101)’
+* used SDK: ‘MacOSX26.5.sdk’
+* checking installed package size ... OK
+* checking package directory ... OK
+* checking DESCRIPTION meta-information ... NOTE
+Checking should be performed on sources prepared by ‘R CMD build’.
+* checking top-level files ... OK
+* checking for left-over files ... OK
+* checking index information ... OK
+* checking package subdirectories ... WARNING
+Found the following directory with the name of a check directory:
+  ./..Rcheck
+Most likely, these were included erroneously.
+* checking code files for non-ASCII characters ... OK
+* checking R files for syntax errors ... OK
+* checking whether the package can be loaded ... OK
+* checking whether the package can be loaded with stated dependencies ... OK
+* checking whether the package can be unloaded cleanly ... OK
+* checking whether the namespace can be loaded with stated dependencies ... OK
+* checking whether the namespace can be unloaded cleanly ... OK
+* checking dependencies in R code ... NOTE
+Namespaces in Imports field not imported from:
+  ‘RcppDist’ ‘mvtnorm’
+  All declared Imports should be used.
+* checking S3 generic/method consistency ... OK
+* checking replacement functions ... OK
+* checking foreign function calls ... OK
+* checking R code for possible problems ... NOTE
+dsgamma: no visible global function definition for ‘dgamma’
+dzig: no visible global function definition for ‘dunif’
+gibbsGMTD : logprho: no visible global function definition for ‘dnorm’
+gibbsNBMTD: no visible global function definition for ‘rpois’
+gibbsPMTD: no visible global function definition for ‘rpois’
+psgamma: no visible global function definition for ‘pgamma’
+pzig: no visible global function definition for ‘punif’
+qsgamma: no visible global function definition for ‘qgamma’
+qzig: no visible global function definition for ‘qunif’
+rCopGammaMTD: no visible global function definition for ‘pgamma’
+rCopGammaMTD: no visible global function definition for ‘qnorm’
+rCopGammaMTD: no visible global function definition for ‘rnorm’
+rCopGammaMTD: no visible global function definition for ‘rgamma’
+rCopGammaMTD: no visible global function definition for ‘pnorm’
+rCopGammaMTD: no visible global function definition for ‘qgamma’
+rCopZIGammaMTD: no visible global function definition for ‘qnorm’
+rCopZIGammaMTD: no visible global function definition for ‘rnorm’
+rCopZIGammaMTD: no visible global function definition for ‘pnorm’
+rGMTD: no visible global function definition for ‘rnorm’
+rLMTD: no visible binding for global variable ‘trun’
+rNBMTD: no visible global function definition for ‘rnbinom’
+rNBMTD: no visible global function definition for ‘rbinom’
+rPMTD: no visible global function definition for ‘rpois’
+rPMTD: no visible global function definition for ‘rbinom’
+rsgamma: no visible global function definition for ‘rgamma’
+rzig: no visible global function definition for ‘rbinom’
+rzig: no visible global function definition for ‘runif’
+specCI: no visible global function definition for ‘quantile’
+summarize.matrix: no visible binding for global variable ‘median’
+summarize.numeric: no visible global function definition for ‘median’
+tsRegMTD: no visible global function definition for ‘model.frame’
+uniSlice: no visible global function definition for ‘rexp’
+uniSlice: no visible global function definition for ‘runif’
+uniSlice: no visible binding for '<<-' assignment to ‘uni.slice.evals’
+uniSlice: no visible binding for global variable ‘uni.slice.evals’
+updateCDPweight: no visible global function definition for ‘pbeta’
+updateCopGMTDmu : logpmu: no visible global function definition for
+  ‘dnorm’
+updateCopGMTDsigma2 : logpsigma2: no visible global function definition
+  for ‘dgamma’
+updateCopGMTDsigma2 : logpsigma2: no visible global function definition
+  for ‘dnorm’
+updateCopGammaMTDalp : logpalp: no visible global function definition
+  for ‘dgamma’
+updateCopGammaMTDbe : logpbe: no visible global function definition for
+  ‘dgamma’
+updateCopZIGammaMTDrho : logprho: no visible global function definition
+  for ‘dnorm’
+updateGMTDmu: no visible global function definition for ‘rnorm’
+updateGMTDsigma2: no visible global function definition for ‘rgamma’
+updateNBMTDkap: no visible global function definition for ‘rnorm’
+updateNBMTDkap: no visible global function definition for ‘dnbinom’
+updateNBMTDkap: no visible global function definition for ‘dgamma’
+updateNBMTDkap: no visible global function definition for ‘runif’
+updateNBMTDpsi: no visible global function definition for ‘rbeta’
+updateNBMTDth: no visible global function definition for ‘rbeta’
+updatePMTDla: no visible global function definition for ‘rgamma’
+updatePMTDth: no visible global function definition for ‘rbeta’
+updateRegLMTDalpha: no visible global function definition for ‘rgamma’
+updateRegLMTDbeta: no visible global function definition for ‘rnorm’
+updateRegLMTDbeta: no visible global function definition for ‘runif’
+updateRegLMTDphi: no visible global function definition for ‘rnorm’
+updateRegLMTDphi: no visible global function definition for ‘dgamma’
+updateRegLMTDphi: no visible global function definition for ‘runif’
+updateSBweight: no visible global function definition for ‘rbeta’
+updateZICopGammaMTDPi : logpPi: no visible global function definition
+  for ‘dunif’
+updateZICopGammaMTDalp : logpalp: no visible global function definition
+  for ‘dgamma’
+updateZICopGammaMTDbe : logpbe: no visible global function definition
+  for ‘dgamma’
+Undefined global functions or variables:
+  dgamma dnbinom dnorm dunif median model.frame pbeta pgamma pnorm
+  punif qgamma qnorm quantile qunif rbeta rbinom rexp rgamma rnbinom
+  rnorm rpois runif trun uni.slice.evals
+Consider adding
+  importFrom("stats", "dgamma", "dnbinom", "dnorm", "dunif", "median",
+             "model.frame", "pbeta", "pgamma", "pnorm", "punif",
+             "qgamma", "qnorm", "quantile", "qunif", "rbeta", "rbinom",
+             "rexp", "rgamma", "rnbinom", "rnorm", "rpois", "runif")
+to your NAMESPACE file.
+* checking Rd files ... OK
+* checking Rd metadata ... OK
+* checking Rd cross-references ... OK
+* checking for missing documentation entries ... OK
+* checking for code/documentation mismatches ... WARNING
+Codoc mismatches from Rd file 'tsMTD.Rd':
+tsMTD
+  Code: function(obs, mtdorder, family, weight, prior, tuning,
+                 starting, mcmc_param, cop_family = NULL, marg_family =
+                 NULL)
+  Docs: function(obs, mtdorder, family, weight, prior, tuning,
+                 starting, mcmc_param)
+  Argument names in code not in docs:
+    cop_family marg_family
+
+* checking Rd \usage sections ... OK
+* checking Rd contents ... OK
+* checking for unstated dependencies in examples ... OK
+* checking line endings in C/C++/Fortran sources/headers ... OK
+* checking compiled code ... OK
+* checking examples ... NONE
+* checking for unstated dependencies in ‘tests’ ... OK
+* checking tests ... ERROR
+  Running ‘testthat.R’
+Running the tests in ‘tests/testthat.R’ failed.
+Last 13 lines of output:
+  ── Error ('test-pred.R:41:3'): predMTD predicts ZI Gamma copula quantiles ──────
+  Error in `predMTD(s$fit, "zigamma", s$lags, probs = c(0.1, 0.9))`: error: lack of posterior samples.
+  Backtrace:
+      ▆
+   1. └─mtd::predMTD(s$fit, "zigamma", s$lags, probs = c(0.1, 0.9)) at test-pred.R:41:3
+  ── Error ('test-pred.R:57:3'): predMTD_2 returns ZI Gamma copula posterior predictive means ──
+  Error in `predMTD_2(s$fit, "zigamma", s$lags, probs = c(0.1, 0.9))`: error: lack of posterior samples.
+  Backtrace:
+      ▆
+   1. └─mtd:::predMTD_2(s$fit, "zigamma", s$lags, probs = c(0.1, 0.9)) at test-pred.R:57:3
+  
+  [ FAIL 4 | WARN 0 | SKIP 0 | PASS 117 ]
+  Error:
+  ! Test failures.
+  Execution halted
+* DONE
+Status: 1 ERROR, 4 WARNINGs, 4 NOTEs

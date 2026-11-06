@@ -1,0 +1,13 @@
+lagmat                  Lag matrix of a time series
+mtd                     mtd: a package for fitting univariate
+                        non-Gaussian time series using mixture
+                        transition distribution (MTD) models
+predMTD                 One-step ahead prediction
+rMTD                    Simulation from an MTD model
+rqrMTD                  Randomize quantile residual analysis for MTD
+                        models
+summarize               Obtain posterior estimates
+summarize.matrix        Obtain posterior estimates
+summarize.numeric       Obtain posterior estimates
+tsMTD                   Fit a time series MTD model
+tsRegMTD                Fit a time series regression MTD model
