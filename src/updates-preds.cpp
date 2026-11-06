@@ -1,13 +1,15 @@
 #include <iostream>
 #include <RcppArmadillo.h>
 #include <RcppArmadilloExtensions/sample.h>
+#include <RcppDist.h>
+#include <RcppTN.h>
 #include <math.h>
 #include "utils.h"
 
 using namespace std;
 using namespace Rcpp;
 
-// [[Rcpp::depends(RcppArmadillo)]]
+// [[Rcpp::depends(RcppArmadillo, RcppDist, RcppTN)]]
 
 #define PMAX  1.0 - 1e-10
 #define PMIN  1e-10
@@ -20,7 +22,8 @@ double dBiCop_cpp(const double& uu,
                   const bool& logd = false) {
   
   double logdens;
-  
+
+  // Gaussian
   if (cop_family == 1) {
     double xx = R::qnorm(uu, 0.0, 1.0, true, false);
     double yy = R::qnorm(vv, 0.0, 1.0, true, false);
@@ -31,6 +34,7 @@ double dBiCop_cpp(const double& uu,
     double ee = rho2 * (xx2 + yy2) - 2.0 * rho * xx * yy;
     logdens = -.5 * ee / (1.0 - rho2) - .5 * log(1.0 - rho2);
   } 
+  // Gumbel
   else if (cop_family == 2) {
     double eta = cop_param;
     if (eta < 1) {
@@ -45,6 +49,7 @@ double dBiCop_cpp(const double& uu,
     logdens = -pow(tt, 1.0 / eta) + log(pow(tt, 1.0 / eta) + eta - 1.0) + 
       (1.0 / eta - 2.0) * log(tt) + (eta - 1.0) * (log(xx) + log(yy)) + xx + yy;
   }
+  // Clayton
   else if (cop_family == 3) {
     double delta = cop_param;
     if (delta > 98) {
@@ -120,19 +125,23 @@ double dBiCopMar_cpp(const double& xx,
                      const bool& logd = false) {
   
   double uu, vv;
-  
+
+  // Beta marginal   
   if (marg_family == 1) {
     uu = R::pbeta(xx, mar_param(0), mar_param(1), true, false);
     vv = R::pbeta(yy, mar_param(2), mar_param(3), true, false);
   }
+  // Gamma marginal 
   else if (marg_family == 2) {
     uu = R::pgamma(xx, mar_param(0), 1.0 / mar_param(1), true, false);
     vv = R::pgamma(yy, mar_param(2), 1.0 / mar_param(3), true, false);
   } 
+  // Gaussian marginal 
   else if (marg_family == 3) {
     uu = R::pnorm(xx, mar_param(0), mar_param(1), true, false);
     vv = R::pnorm(yy, mar_param(2), mar_param(3), true, false);
   }   
+  // ZIGamma marginal 
   else if (marg_family == 4) {
     uu = pzig(xx, mar_param(0), mar_param(1), mar_param(4), mar_param(5));
     vv = pzig(yy, mar_param(2), mar_param(3), mar_param(6), mar_param(7));
@@ -169,25 +178,29 @@ arma::colvec dBiCopMar_cpp2(const arma::colvec& xx,
   
   int nn = xx.n_rows;    
   arma::colvec uu(nn), vv(nn);
-  
+
+  // Beta marginal 
   if (marg_family == 1) {
     for (int i = 0; i < nn; ++i) {
       uu(i) = R::pbeta(xx(i), mar_param(i,0), mar_param(i,1), true, false);
       vv(i) = R::pbeta(yy(i), mar_param(i,2), mar_param(i,3), true, false);
     }
   }
+  // Gamma marginal 
   else if (marg_family == 2) {
     for (int i = 0; i < nn; ++i) {
       uu(i) = R::pgamma(xx(i), mar_param(i,0), 1.0 / mar_param(i,1), true, false);
       vv(i) = R::pgamma(yy(i), mar_param(i,2), 1.0 / mar_param(i,3), true, false);
     }
   }                                 
+  // Gaussian marginal 
   else if (marg_family == 3) {
     for (int i = 0; i < nn; ++i) {
       uu(i) = R::pnorm(xx(i), mar_param(i,0), mar_param(i,1), true, false);
       vv(i) = R::pnorm(yy(i), mar_param(i,2), mar_param(i,3), true, false);
     }
   }
+  // ZIGamma marginal 
   else if (marg_family == 4) {
     for (int i = 0; i < nn; ++i) {
       uu(i) = pzig(xx(i), mar_param(i,0), mar_param(i,1), mar_param(i, 4), mar_param(i, 5));
@@ -231,11 +244,13 @@ double rConGum_mnr(const double& vv,
 
   for (int i = 0; i < maxiter; ++i) {    
 
+    // Newton step
     tt = zz0 + (eta - 1.0) * log(zz0) - (ww + (eta - 1.0) * log(ww) - log(pp));
     tt1 = 1.0 + (eta - 1.0) / zz0;
     tt2 = (1.0 - eta) / pow(zz0, 2);
     zz1 = zz0 - tt * tt1 / (tt1 * tt1  - tt * tt2);
 
+    // Bisection step    
     if (zz1 < lob || zz1 > upb) {
       if (tt < 0) {
         lob = zz0;
@@ -281,12 +296,14 @@ double rConCop(const double& vv,
   double zz = arma::randu();
   double uu;
 
+  // Gaussian
   if (cop_family == 1) {
     double rho = cop_param;
     double qzz = R::qnorm(zz, 0.0, 1.0, true, false);
     double qvv = R::qnorm(vv, 0.0, 1.0, true, false);
     uu = R::pnorm(sqrt(1.0 - rho * rho) * qzz + rho * qvv, 0.0, 1.0, true, false);
   }
+  // Gumbel
   else if (cop_family == 2) {
     double eta = cop_param;
     if (eta > 50.0) {
@@ -294,6 +311,7 @@ double rConCop(const double& vv,
     }
     uu = rConGum_mnr(vv, eta, tol, maxiter);
   }
+  // Clayton
   else if (cop_family == 3) {
     double delta = cop_param;
     if (delta > 98.0) {
@@ -741,6 +759,7 @@ arma::mat predNBMTD(const int& mtdorder,
   
 }
 
+// one-step ahead posterior predictive distribution of the copula Gamma MTD model
 // [[Rcpp::export]]
 arma::mat predCopGammaMTD(const int& mtdorder, 
                           const arma::mat& weight, 
@@ -791,6 +810,8 @@ arma::mat predCopGammaMTD(const int& mtdorder,
 
 }
 
+// one-step ahead posterior predictive distribution of the copula Gamma MTD model
+// Return predictive means, instead of quantiles
 // [[Rcpp::export]]
 arma::mat predCopGammaMTD_2(const int& mtdorder, 
                             const arma::mat& weight, 
@@ -843,6 +864,7 @@ arma::mat predCopGammaMTD_2(const int& mtdorder,
 
 }
 
+// one-step ahead posterior predictive distribution of the copula ZIGamma MTD model
 // [[Rcpp::export]]
 arma::mat predCopZIGammaMTD(const int& mtdorder, 
                             const arma::mat& weight, 
@@ -897,6 +919,8 @@ arma::mat predCopZIGammaMTD(const int& mtdorder,
 
 }
 
+// one-step ahead posterior predictive distribution of the copula ZIGamma MTD model
+// Return predictive means, instead of quantiles
 // [[Rcpp::export]]
 arma::mat predCopZIGammaMTD_2(const int& mtdorder, 
                               const arma::mat& weight, 

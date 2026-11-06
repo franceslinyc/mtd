@@ -247,12 +247,14 @@ double pBiCop_cpp(const double& uu,
                   const double& cop_param,
                   const bool& logd = false) {
   double logdens;
+  // Gaussian  
   if (cop_family == 1) {
     double xx = R::qnorm(uu, 0.0, 1.0, true, false);
     double yy = R::qnorm(vv, 0.0, 1.0, true, false);
     double rho = cop_param;
     logdens = pbv_rcpp_pbvnorm0(xx, yy, rho);
   }
+  // Gumbel
   else if (cop_family == 2) {
     double eta = cop_param;
     if (eta < 1) {
@@ -267,6 +269,7 @@ double pBiCop_cpp(const double& uu,
     logdens = -pow(tt, 1.0 / eta) + log(pow(tt, 1.0 / eta) + eta - 1.0) +
       (1.0 / eta - 2.0) * log(tt) + (eta - 1.0) * (log(xx) + log(yy)) + xx + yy;
   }
+  // Clayton
   else if (cop_family == 3) {
     double delta = cop_param;
     if (delta > 98) {
@@ -327,18 +330,22 @@ double pBiCopMar_cpp(const double& xx,
 
   double uu, vv;
 
+  // Beta marginal 
   if (marg_family == 1) {
     uu = R::pbeta(xx, mar_param(0), mar_param(1), true, false);
     vv = R::pbeta(yy, mar_param(2), mar_param(3), true, false);
   }
+  // Gamma marginal 
   else if (marg_family == 2) {
     uu = R::pgamma(xx, mar_param(0), 1.0 / mar_param(1), true, false);
     vv = R::pgamma(yy, mar_param(2), 1.0 / mar_param(3), true, false);
   }
+  // Gaussian marginal 
   else if (marg_family == 3) {
     uu = R::pnorm(xx, mar_param(0), mar_param(1), true, false);
     vv = R::pnorm(yy, mar_param(2), mar_param(3), true, false);
   }
+  // ZIGamma marginal 
   else if (marg_family == 4) {
     uu = pzig_v2(xx, mar_param(0), mar_param(1), mar_param(4), mar_param(5));
     vv = pzig_v2(yy, mar_param(2), mar_param(3), mar_param(6), mar_param(7));
@@ -375,24 +382,28 @@ arma::colvec pBiCopMar_cpp2(const arma::colvec& xx,
   int nn = xx.n_rows;
   arma::colvec uu(nn), vv(nn);
 
+  // Beta marginal 
   if (marg_family == 1) {
     for (int i = 0; i < nn; ++i) {
       uu(i) = R::pbeta(xx(i), mar_param(i,0), mar_param(i,1), true, false);
       vv(i) = R::pbeta(yy(i), mar_param(i,2), mar_param(i,3), true, false);
     }
   }
+  // Gamma marginal 
   else if (marg_family == 2) {
     for (int i = 0; i < nn; ++i) {
       uu(i) = R::pgamma(xx(i), mar_param(i,0), 1.0 / mar_param(i,1), true, false);
       vv(i) = R::pgamma(yy(i), mar_param(i,2), 1.0 / mar_param(i,3), true, false);
     }
   }
+  // Gaussian marginal 
   else if (marg_family == 3) {
     for (int i = 0; i < nn; ++i) {
       uu(i) = R::pnorm(xx(i), mar_param(i,0), mar_param(i,1), true, false);
       vv(i) = R::pnorm(yy(i), mar_param(i,2), mar_param(i,3), true, false);
     }
   }
+  // ZIGamma marginal 
   else if (marg_family == 4) {
     for (int i = 0; i < nn; ++i) {
       uu(i) = pzig_v2(xx(i), mar_param(i,0), mar_param(i,1), mar_param(i, 4), mar_param(i, 5));
