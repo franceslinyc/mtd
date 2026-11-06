@@ -420,7 +420,6 @@ gibbsCopZIGammaMTD <- function(obs, mtdorder, weight_param, prior, tuning, start
   alp_save <- array(NA, dim = niter - nburn)
   be_save <- array(NA, dim = niter - nburn)
   Pi_save <- array(NA, dim = niter - nburn)
-  #eps_save <- array(NA, dim = niter - nburn)
 
   #######
   # mcmc
@@ -439,10 +438,6 @@ gibbsCopZIGammaMTD <- function(obs, mtdorder, weight_param, prior, tuning, start
     ## update be (scale parameter)
     be <- updateZICopGammaMTDbe(be, dat, dep_lag, u_be, v_be, dat_rho, alp, eps, Pi, trun_size, step_size, 
                                 cop_family, marg_family, upper_be)
-
-    ## update eps
-    # eps <- updateZICopGammaMTDeps(eps, dat, dep_lag, eps_0, dat_rho, alp, be, Pi, trun_size, step_size, 
-    #                               cop_family, marg_family, upper_eps)
 
     ## update pi 
     Pi <- updateZICopGammaMTDPi(Pi, dat, dep_lag, dat_rho, alp, be, eps, trun_size, step_size, 
@@ -501,7 +496,6 @@ gibbsCopZIGammaMTD <- function(obs, mtdorder, weight_param, prior, tuning, start
       alp_save[iter - nburn] <- alp
       be_save[iter - nburn] <- be
       Pi_save[iter - nburn] <- Pi
-      #eps_save[iter - nburn] <- eps
     }
   }
 
@@ -514,8 +508,9 @@ gibbsCopZIGammaMTD <- function(obs, mtdorder, weight_param, prior, tuning, start
        rho = rho_save[, selc_index],
        shape1 = alp_save[selc_index],
        shape2 = be_save[selc_index],
-       Pi = Pi_save[selc_index]#,
-       #eps = eps_save[selc_index]
+      Pi = Pi_save[selc_index],
+      # Epsilon is fixed, so repeat it for each retained MCMC draw.
+      eps = rep(eps, length(selc_index))
        )
   
 } 
